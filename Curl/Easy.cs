@@ -147,7 +147,7 @@ namespace Curl
 			return value;
 		}
 
-		IntPtr NativeWriteHandler (IntPtr data, IntPtr size, IntPtr nmemb, IntPtr userdata)
+	    UIntPtr NativeWriteHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
 		{
 			var length = (int)size * (int)nmemb;
 
@@ -157,10 +157,10 @@ namespace Curl
 				dataHandler (buffer);
 			}
 
-			return (IntPtr)length;
+			return (UIntPtr)length;
 		}
 
-		IntPtr NativeHeaderHandler (IntPtr data, IntPtr size, IntPtr nmemb, IntPtr userdata)
+	    UIntPtr NativeHeaderHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
 		{
 			var length = (int)size * (int)nmemb;
 
@@ -170,7 +170,7 @@ namespace Curl
 				ParseHeader (Encoding.UTF8.GetString (buffer), headerHandler);
 			}
 
-			return (IntPtr)length;
+			return (UIntPtr)length;
 		}
 
 		void ParseHeader (string header, HeaderHandler handler)

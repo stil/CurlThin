@@ -53,7 +53,7 @@ namespace Curl
 		    [DllImport(LIBCURL, EntryPoint = "curl_easy_setopt")]
             public static extern Code SetOpt (IntPtr handle, Option option, string value);
 
-			public delegate IntPtr DataHandler (IntPtr data, IntPtr size, IntPtr nmemb, IntPtr userdata);
+			public delegate UIntPtr DataHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
 			public static extern Code SetOpt (IntPtr handle, Option option, DataHandler value);
