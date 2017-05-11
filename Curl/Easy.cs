@@ -43,14 +43,11 @@ namespace Curl
 
 	public class Easy : IDisposable
 	{
-		IntPtr handle;
-		internal IntPtr Handle {
-			get { return handle; }
-		}
+	    internal IntPtr Handle { get; private set; }
 
-		public Easy ()
+	    public Easy ()
 		{
-			handle = Native.Easy.Init ();
+			Handle = Native.Easy.Init ();
 		}
 
 		~Easy ()
@@ -66,22 +63,22 @@ namespace Curl
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (handle != IntPtr.Zero) {
-				Native.Easy.Cleanup (handle);
-				handle = IntPtr.Zero;
+			if (Handle != IntPtr.Zero) {
+				Native.Easy.Cleanup (Handle);
+				Handle = IntPtr.Zero;
 			}
 		}
 
 		void CheckDisposed ()
 		{
-			if (handle == IntPtr.Zero)
+			if (Handle == IntPtr.Zero)
 				throw new ObjectDisposedException ("Curl.Easy");
 		}
 
 		public void Perform ()
 		{
 			CheckDisposed ();
-			var code = Native.Easy.Perform (handle);
+			var code = Native.Easy.Perform (Handle);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -89,7 +86,7 @@ namespace Curl
 		internal void SetOpt (CURLoption option, int value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (handle, option, value);
+			var code = Native.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -97,7 +94,7 @@ namespace Curl
 		internal void SetOpt (CURLoption option, string value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (handle, option, value);
+			var code = Native.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -105,7 +102,7 @@ namespace Curl
 		internal void SetOpt (CURLoption option, IntPtr value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (handle, option, value);
+			var code = Native.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -113,7 +110,7 @@ namespace Curl
 		internal void SetOpt (CURLoption option, Native.Easy.DataHandler value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (handle, option, value);
+			var code = Native.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -122,7 +119,7 @@ namespace Curl
 		{
 			CheckDisposed ();
 			int value;
-			var code = Native.Easy.GetInfo (handle, info, out value);
+			var code = Native.Easy.GetInfo (Handle, info, out value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
@@ -132,7 +129,7 @@ namespace Curl
 		{
 			CheckDisposed ();
 			IntPtr value;
-			var code = Native.Easy.GetInfo (handle, info, out value);
+			var code = Native.Easy.GetInfo (Handle, info, out value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
@@ -142,7 +139,7 @@ namespace Curl
 		{
 			CheckDisposed ();
 			double value;
-			var code = Native.Easy.GetInfo (handle, info, out value);
+			var code = Native.Easy.GetInfo (Handle, info, out value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
