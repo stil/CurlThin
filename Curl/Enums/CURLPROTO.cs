@@ -1,7 +1,10 @@
 // ReSharper disable InconsistentNaming
 
+using System;
+
 namespace Curl.Enums
 {
+    [Flags]
 	public enum CURLPROTO
     {
         HTTP   = 1<<0,
