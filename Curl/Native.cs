@@ -34,7 +34,13 @@ namespace Curl
 	{
 		const string LIBCURL = "libcurl";
 
-		public static class Easy
+	    [DllImport(LIBCURL, EntryPoint = "curl_global_init")]
+	    public static extern CURLcode Init(CURLglobal flags = CURLglobal.DEFAULT);
+
+	    [DllImport(LIBCURL, EntryPoint = "curl_global_cleanup")]
+	    public static extern void Cleanup();
+
+        public static class Easy
 		{
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_init")]
 			public static extern IntPtr Init ();
