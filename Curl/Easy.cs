@@ -25,8 +25,8 @@
 // THE SOFTWARE.
 
 using System;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 using Curl.Enums;
 
 namespace Curl
@@ -178,17 +178,17 @@ namespace Curl
 
 			if (header == null) {
 				return;
-			} else if (header == "\r\n") {
-				handler (HeaderKind.BodyDelimiter, null, null);
-				return;
 			}
+		    if (header == "\r\n") {
+		        handler (HeaderKind.BodyDelimiter, null, null);
+		        return;
+		    }
 
-			header = header.TrimEnd ('\r', '\n');
+		    header = header.TrimEnd ('\r', '\n');
 			var colonOffset = header.IndexOf (':');
 
 			if (header.StartsWith ("HTTP/") && colonOffset < 0) {
 				handler (HeaderKind.Status, header, null);
-				return;
 			} else if (colonOffset > 0) {
 				handler (HeaderKind.KeyValue,
 					header.Substring (0, colonOffset).Trim (),

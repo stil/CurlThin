@@ -24,10 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Curl.Enums;
@@ -44,9 +42,9 @@ namespace Curl
 		HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			HttpResponseMessage response = null;
-			Curl.Easy easy = null;
+			Easy easy = null;
 
-			easy = new Curl.Easy {
+			easy = new Easy {
 				Protocols = CURLPROTO.HTTP | CURLPROTO.HTTPS,
 				Url = request.RequestUri.AbsoluteUri,
 				AutoReferer = true,

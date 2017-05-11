@@ -47,10 +47,10 @@ namespace Curl
 		{
 			if (multi == null)
 				throw new ArgumentNullException (nameof(multi));
-			else if (easy == null)
-				throw new ArgumentNullException (nameof(easy));
+		    if (easy == null)
+		        throw new ArgumentNullException (nameof(easy));
 
-			this.multi = multi;
+		    this.multi = multi;
 			easy.WriteHandler = AppendBuffer;
 		}
 
@@ -94,14 +94,14 @@ namespace Curl
 		{
 			if (buffer == null)
 				throw new ArgumentNullException (nameof(buffer));
-			else if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException (nameof(offset));
-			else if (count < 0)
-				throw new ArgumentOutOfRangeException (nameof(count));
-			else if (offset + count > buffer.Length)
-				throw new ArgumentException ("sum of offset and count is larger than the buffer length");
+		    if (offset < 0 || offset >= buffer.Length)
+		        throw new ArgumentOutOfRangeException (nameof(offset));
+		    if (count < 0)
+		        throw new ArgumentOutOfRangeException (nameof(count));
+		    if (offset + count > buffer.Length)
+		        throw new ArgumentException ("sum of offset and count is larger than the buffer length");
 
-			CheckDisposed ();
+		    CheckDisposed ();
 
 			while (!haveData || (bufferLength == 0 && multi.HandlesRemaining > 0))
 				multi.AutoPerformWithSelect ();

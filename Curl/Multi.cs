@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Curl.Enums;
 
@@ -144,9 +145,9 @@ namespace Curl
 					var code = Native.Multi.Timeout (handle, ref curlTimeout);
 					if (code != CURLMcode.OK)
 						throw new CurlException (code);
-					else if (curlTimeout >= 0)
-						return TimeSpan.FromMilliseconds (curlTimeout);
-					return Timeout;
+				    if (curlTimeout >= 0)
+				        return TimeSpan.FromMilliseconds (curlTimeout);
+				    return Timeout;
 				},
 
 				setFds: (IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds) => {
@@ -182,7 +183,7 @@ namespace Curl
 				yield return child;
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return GetEnumerator ();
 		}
