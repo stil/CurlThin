@@ -118,9 +118,8 @@ namespace Curl
 		internal int GetInfoInt32 (CURLINFO info)
 		{
 			CheckDisposed ();
-			int value;
-			var code = Native.Easy.GetInfo (Handle, info, out value);
-			if (code != CURLcode.OK)
+            var code = Native.Easy.GetInfo(Handle, info, out int value);
+            if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
@@ -128,9 +127,8 @@ namespace Curl
 		internal IntPtr GetInfoIntPtr (CURLINFO info)
 		{
 			CheckDisposed ();
-			IntPtr value;
-			var code = Native.Easy.GetInfo (Handle, info, out value);
-			if (code != CURLcode.OK)
+            var code = Native.Easy.GetInfo(Handle, info, out IntPtr value);
+            if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
@@ -138,9 +136,8 @@ namespace Curl
 		internal double GetInfoDouble (CURLINFO info)
 		{
 			CheckDisposed ();
-			double value;
-			var code = Native.Easy.GetInfo (Handle, info, out value);
-			if (code != CURLcode.OK)
+            var code = Native.Easy.GetInfo(Handle, info, out double value);
+            if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
