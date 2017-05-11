@@ -72,7 +72,7 @@ namespace Curl
 	    private void CheckDisposed ()
 		{
 			if (Handle == IntPtr.Zero)
-				throw new ObjectDisposedException ("Curl.Easy");
+				throw new ObjectDisposedException (nameof(Easy));
 		}
 
 		public void Perform ()
