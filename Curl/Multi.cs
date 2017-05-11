@@ -104,7 +104,7 @@ namespace Curl
 		public void Add (Easy easy)
 		{
 			if (easy == null)
-				throw new ArgumentNullException ("easy");
+				throw new ArgumentNullException (nameof(easy));
 
 			CheckDisposed ();
 
@@ -123,7 +123,7 @@ namespace Curl
 		public void Remove (Easy easy)
 		{
 			if (easy == null)
-				throw new ArgumentNullException ("easy");
+				throw new ArgumentNullException (nameof(easy));
 
 			CheckDisposed ();
 

@@ -46,9 +46,9 @@ namespace Curl
 		public CurlResponseStream (Multi multi, Easy easy)
 		{
 			if (multi == null)
-				throw new ArgumentNullException ("multi");
+				throw new ArgumentNullException (nameof(multi));
 			else if (easy == null)
-				throw new ArgumentNullException ("easy");
+				throw new ArgumentNullException (nameof(easy));
 
 			this.multi = multi;
 			easy.WriteHandler = AppendBuffer;
@@ -93,11 +93,11 @@ namespace Curl
 		public override int Read (byte [] buffer, int offset, int count)
 		{
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+				throw new ArgumentNullException (nameof(buffer));
 			else if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof(offset));
 			else if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof(count));
 			else if (offset + count > buffer.Length)
 				throw new ArgumentException ("sum of offset and count is larger than the buffer length");
 

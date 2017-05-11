@@ -174,7 +174,7 @@ namespace Curl
 		void ParseHeader (string header, HeaderHandler handler)
 		{
 			if (handler == null)
-				throw new ArgumentNullException ("handler");
+				throw new ArgumentNullException (nameof(handler));
 
 			if (header == null) {
 				return;
