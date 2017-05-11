@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using Curl.Enums;
 
 namespace Curl
 {
@@ -81,68 +82,68 @@ namespace Curl
 		{
 			CheckDisposed ();
 			var code = Native.Easy.Perform (handle);
-			if (code != Native.Code.OK)
+			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
 
-		internal void SetOpt (Native.Option option, int value)
+		internal void SetOpt (CURLoption option, int value)
 		{
 			CheckDisposed ();
 			var code = Native.Easy.SetOpt (handle, option, value);
-			if (code != Native.Code.OK)
+			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
 
-		internal void SetOpt (Native.Option option, string value)
+		internal void SetOpt (CURLoption option, string value)
 		{
 			CheckDisposed ();
 			var code = Native.Easy.SetOpt (handle, option, value);
-			if (code != Native.Code.OK)
+			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
 
-		internal void SetOpt (Native.Option option, IntPtr value)
+		internal void SetOpt (CURLoption option, IntPtr value)
 		{
 			CheckDisposed ();
 			var code = Native.Easy.SetOpt (handle, option, value);
-			if (code != Native.Code.OK)
+			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
 
-		internal void SetOpt (Native.Option option, Native.Easy.DataHandler value)
+		internal void SetOpt (CURLoption option, Native.Easy.DataHandler value)
 		{
 			CheckDisposed ();
 			var code = Native.Easy.SetOpt (handle, option, value);
-			if (code != Native.Code.OK)
+			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
 
-		internal int GetInfoInt32 (Native.Info info)
+		internal int GetInfoInt32 (CURLINFO info)
 		{
 			CheckDisposed ();
 			int value;
 			var code = Native.Easy.GetInfo (handle, info, out value);
-			if (code != Native.Code.OK)
+			if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
 
-		internal IntPtr GetInfoIntPtr (Native.Info info)
+		internal IntPtr GetInfoIntPtr (CURLINFO info)
 		{
 			CheckDisposed ();
 			IntPtr value;
 			var code = Native.Easy.GetInfo (handle, info, out value);
-			if (code != Native.Code.OK)
+			if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
 
-		internal double GetInfoDouble (Native.Info info)
+		internal double GetInfoDouble (CURLINFO info)
 		{
 			CheckDisposed ();
 			double value;
 			var code = Native.Easy.GetInfo (handle, info, out value);
-			if (code != Native.Code.OK)
+			if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
@@ -202,7 +203,7 @@ namespace Curl
 		string url;
 		public string Url {
 			get { return url; }
-			set { SetOpt (Native.Option.URL, value); url = value; }
+			set { SetOpt (CURLoption.URL, value); url = value; }
 		}
 
 		DataHandler dataHandler;
@@ -211,9 +212,9 @@ namespace Curl
 			set {
 				dataHandler = value;
 				if (value == null)
-					SetOpt (Native.Option.WRITEFUNCTION, IntPtr.Zero);
+					SetOpt (CURLoption.WRITEFUNCTION, IntPtr.Zero);
 				else
-					SetOpt (Native.Option.WRITEFUNCTION, NativeWriteHandler);
+					SetOpt (CURLoption.WRITEFUNCTION, NativeWriteHandler);
 			}
 		}
 
@@ -223,17 +224,17 @@ namespace Curl
 			set {
 				headerHandler = value;
 				if (value == null)
-					SetOpt (Native.Option.HEADERFUNCTION, IntPtr.Zero);
+					SetOpt (CURLoption.HEADERFUNCTION, IntPtr.Zero);
 				else
-					SetOpt (Native.Option.HEADERFUNCTION, NativeHeaderHandler);
+					SetOpt (CURLoption.HEADERFUNCTION, NativeHeaderHandler);
 			}
 		}
 
-		Protocols protocols;
-		public Protocols Protocols {
+		CURLPROTO protocols;
+		public CURLPROTO Protocols {
 			get { return protocols; }
 			set {
-				SetOpt (Native.Option.PROTOCOLS, (int)value);
+				SetOpt (CURLoption.PROTOCOLS, (int)value);
 				protocols = value;
 			}
 		}
@@ -242,7 +243,7 @@ namespace Curl
 		public bool FollowLocation {
 			get { return followLocation; }
 			set {
-				SetOpt (Native.Option.FOLLOWLOCATION, value ? 1 : 0);
+				SetOpt (CURLoption.FOLLOWLOCATION, value ? 1 : 0);
 				followLocation = value;
 			}
 		}
@@ -251,7 +252,7 @@ namespace Curl
 		public bool AutoReferer {
 			get { return autoReferer; }
 			set {
-				SetOpt (Native.Option.AUTOREFERER, value ? 1 : 0);
+				SetOpt (CURLoption.AUTOREFERER, value ? 1 : 0);
 				autoReferer = value;
 			}
 		}
@@ -261,10 +262,10 @@ namespace Curl
 			get { return httpVersion; }
 			set {
 				if (value.Major == 1 && (value.Minor == 0 || value.Minor == 1)) {
-					SetOpt (Native.Option.HTTP_VERSION, value.Minor + 1);
+					SetOpt (CURLoption.HTTP_VERSION, value.Minor + 1);
 					httpVersion = value;
 				} else {
-					SetOpt (Native.Option.HTTP_VERSION, 0);
+					SetOpt (CURLoption.HTTP_VERSION, 0);
 					httpVersion = default (Version);
 				}
 			}
@@ -278,13 +279,13 @@ namespace Curl
 
 				switch (m) {
 				case "GET":
-					SetOpt (Native.Option.HTTPGET, 1);
+					SetOpt (CURLoption.HTTPGET, 1);
 					break;
 				case "POST":
-					SetOpt (Native.Option.HTTPPOST, 1);
+					SetOpt (CURLoption.HTTPPOST, 1);
 					break;
 				case "PUT":
-					SetOpt (Native.Option.PUT, 1);
+					SetOpt (CURLoption.PUT, 1);
 					break;
 				default:
 					throw new CurlException ("Unsupported HTTP method: " + m);
@@ -295,7 +296,7 @@ namespace Curl
 		}
 
 		public int ResponseCode {
-			get { return GetInfoInt32 (Native.Info.RESPONSE_CODE); }
+			get { return GetInfoInt32 (CURLINFO.RESPONSE_CODE); }
 		}
 	}
 }

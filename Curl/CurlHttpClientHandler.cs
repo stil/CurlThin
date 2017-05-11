@@ -30,6 +30,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Curl.Enums;
 
 namespace Curl
 {
@@ -46,7 +47,7 @@ namespace Curl
 			Curl.Easy easy = null;
 
 			easy = new Curl.Easy {
-				Protocols = Protocols.Http | Protocols.Https,
+				Protocols = CURLPROTO.HTTP | CURLPROTO.HTTPS,
 				Url = request.RequestUri.AbsoluteUri,
 				AutoReferer = true,
 				FollowLocation = true,

@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using Curl.Enums;
 
 namespace Curl
 {
@@ -92,11 +93,11 @@ namespace Curl
 				throw new ObjectDisposedException ("Curl.Easy");
 		}
 
-		void Invoke (Func<Native.MultiCode> call)
+		void Invoke (Func<CURLMcode> call)
 		{
 			CheckDisposed ();
 			var code = call ();
-			if (code != Native.MultiCode.OK)
+			if (code != CURLMcode.OK)
 				throw new CurlException (code);
 		}
 
@@ -113,7 +114,7 @@ namespace Curl
 				throw new ObjectDisposedException ("Easy object already disposed");
 
 			var code = Native.Multi.AddHandle (handle, easyHandle);
-			if (code != Native.MultiCode.OK)
+			if (code != CURLMcode.OK)
 				throw new CurlException (code);
 
 			children.Add (easy);
@@ -130,7 +131,7 @@ namespace Curl
 
 			if (children.Remove (easy) && easyHandle != IntPtr.Zero) {
 				var code = Native.Multi.RemoveHandle (handle, easyHandle);
-				if (code != Native.MultiCode.OK)
+				if (code != CURLMcode.OK)
 					throw new CurlException (code);
 			}
 		}
@@ -143,7 +144,7 @@ namespace Curl
 				requestedTimeout: () => {
 					int curlTimeout = -1;
 					var code = Native.Multi.Timeout (handle, ref curlTimeout);
-					if (code != Native.MultiCode.OK)
+					if (code != CURLMcode.OK)
 						throw new CurlException (code);
 					else if (curlTimeout >= 0)
 						return TimeSpan.FromMilliseconds (curlTimeout);
@@ -152,7 +153,7 @@ namespace Curl
 
 				setFds: (IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds) => {
 					var code = Native.Multi.FdSet (handle, readfds, writefds, errorfds, ref maxfds);
-					if (code != Native.MultiCode.OK)
+					if (code != CURLMcode.OK)
 						throw new CurlException (code);
 					return true;
 				}
@@ -168,9 +169,9 @@ namespace Curl
 			var code = Native.Multi.Perform (handle, ref handlesRemaining);
 
 			switch (code) {
-			case Native.MultiCode.CALL_MULTI_PERFORM:
+			case CURLMcode.CALL_MULTI_PERFORM:
 				return PerformResult.PerformAgainNow;
-			case Native.MultiCode.OK:
+			case CURLMcode.OK:
 				return PerformResult.Success;
 			default:
 				throw new CurlException (code);

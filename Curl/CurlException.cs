@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using Curl.Enums;
 
 namespace Curl
 {
@@ -34,11 +35,11 @@ namespace Curl
 		{
 		}
 
-		public CurlException (Native.Code code) : base (code.ToString ())
+		public CurlException (CURLcode code) : base (code.ToString ())
 		{
 		}
 
-		public CurlException (Native.MultiCode code) : base (code.ToString ())
+		public CurlException (CURLMcode code) : base (code.ToString ())
 		{
 		}
 	}
