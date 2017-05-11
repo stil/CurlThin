@@ -39,7 +39,7 @@ namespace Curl
 			return Task.Run (() => Send (request, cancellationToken), cancellationToken);
 		}
 
-		HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
+	    private HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			HttpResponseMessage response = null;
 			Easy easy = null;

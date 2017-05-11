@@ -69,7 +69,7 @@ namespace Curl
 			}
 		}
 
-		void CheckDisposed ()
+	    private void CheckDisposed ()
 		{
 			if (Handle == IntPtr.Zero)
 				throw new ObjectDisposedException ("Curl.Easy");
@@ -145,7 +145,7 @@ namespace Curl
 			return value;
 		}
 
-	    UIntPtr NativeWriteHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
+	    private UIntPtr NativeWriteHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
 		{
 			var length = (int)size * (int)nmemb;
 
@@ -158,7 +158,7 @@ namespace Curl
 			return (UIntPtr)length;
 		}
 
-	    UIntPtr NativeHeaderHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
+	    private UIntPtr NativeHeaderHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
 		{
 			var length = (int)size * (int)nmemb;
 
@@ -171,7 +171,7 @@ namespace Curl
 			return (UIntPtr)length;
 		}
 
-		void ParseHeader (string header, HeaderHandler handler)
+	    private void ParseHeader (string header, HeaderHandler handler)
 		{
 			if (handler == null)
 				throw new ArgumentNullException (nameof(handler));
@@ -197,13 +197,13 @@ namespace Curl
 			}
 		}
 
-		string url;
+	    private string url;
 		public string Url {
 			get => url;
 		    set { SetOpt (CURLoption.URL, value); url = value; }
 		}
 
-		DataHandler dataHandler;
+	    private DataHandler dataHandler;
 		public DataHandler WriteHandler {
 			get => dataHandler;
 		    set {
@@ -215,7 +215,7 @@ namespace Curl
 			}
 		}
 
-		HeaderHandler headerHandler;
+	    private HeaderHandler headerHandler;
 		public HeaderHandler HeaderHandler {
 			get => headerHandler;
 		    set {
@@ -227,7 +227,7 @@ namespace Curl
 			}
 		}
 
-		CURLPROTO protocols;
+	    private CURLPROTO protocols;
 		public CURLPROTO Protocols {
 			get => protocols;
 		    set {
@@ -236,7 +236,7 @@ namespace Curl
 			}
 		}
 
-		bool followLocation;
+	    private bool followLocation;
 		public bool FollowLocation {
 			get => followLocation;
 		    set {
@@ -245,7 +245,7 @@ namespace Curl
 			}
 		}
 
-		bool autoReferer;
+	    private bool autoReferer;
 		public bool AutoReferer {
 			get => autoReferer;
 		    set {
@@ -254,7 +254,7 @@ namespace Curl
 			}
 		}
 
-		Version httpVersion;
+	    private Version httpVersion;
 		public Version HttpVersion {
 			get => httpVersion;
 		    set {
@@ -268,7 +268,7 @@ namespace Curl
 			}
 		}
 
-		string httpMethod;
+	    private string httpMethod;
 		public string HttpMethod {
 			get => httpMethod;
 		    set {

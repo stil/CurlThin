@@ -31,13 +31,13 @@ namespace Curl
 {
 	internal class CurlResponseStream : Stream
 	{
-		Multi multi;
-		long length;
-		long position;
-		byte [] buffer = new byte [4096];
-		int bufferWritePosition;
-		int bufferLength;
-		bool haveData;
+	    private Multi multi;
+	    private long length;
+	    private long position;
+	    private byte [] buffer = new byte [4096];
+	    private int bufferWritePosition;
+	    private int bufferLength;
+	    private bool haveData;
 
 		public CurlResponseStream (Easy easy) : this (new Multi { easy }, easy)
 		{
@@ -54,7 +54,7 @@ namespace Curl
 			easy.WriteHandler = AppendBuffer;
 		}
 
-		void CheckDisposed ()
+	    private void CheckDisposed ()
 		{
 			if (multi == null)
 				throw new ObjectDisposedException ("CurlResponseStream");
@@ -69,7 +69,7 @@ namespace Curl
 			}
 		}
 
-		void AppendBuffer (byte [] data)
+	    private void AppendBuffer (byte [] data)
 		{
 			CheckDisposed ();
 

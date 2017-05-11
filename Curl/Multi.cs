@@ -39,11 +39,11 @@ namespace Curl
 			PerformAgainNow
 		}
 
-		IntPtr handle;
-		List<Easy> children = new List<Easy> ();
-		Native.Select select = new Native.Select ();
+	    private IntPtr handle;
+	    private List<Easy> children = new List<Easy> ();
+	    private Native.Select select = new Native.Select ();
 
-		int handlesRemaining;
+	    private int handlesRemaining;
 		public int HandlesRemaining => handlesRemaining;
 
 	    public TimeSpan Timeout { get; set; }
@@ -86,13 +86,13 @@ namespace Curl
 			}
 		}
 
-		void CheckDisposed ()
+	    private void CheckDisposed ()
 		{
 			if (handle == IntPtr.Zero || select == null)
 				throw new ObjectDisposedException ("Curl.Easy");
 		}
 
-		void Invoke (Func<CURLMcode> call)
+	    private void Invoke (Func<CURLMcode> call)
 		{
 			CheckDisposed ();
 			var code = call ();
