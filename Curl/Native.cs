@@ -50,15 +50,8 @@ namespace Curl
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
 			public static extern Code SetOpt (IntPtr handle, Option option, IntPtr value);
 
-			public unsafe static Code SetOpt (IntPtr handle, Option option, string value)
-			{
-				if (value == null)
-					return SetOpt (handle, option, IntPtr.Zero);
-
-				var bytes = System.Text.Encoding.UTF8.GetBytes (value);
-				fixed (byte *ptr = bytes)
-					return SetOpt (handle, option, new IntPtr (ptr));
-			}
+		    [DllImport(LIBCURL, EntryPoint = "curl_easy_setopt")]
+            public static extern Code SetOpt (IntPtr handle, Option option, string value);
 
 			public delegate IntPtr DataHandler (IntPtr data, IntPtr size, IntPtr nmemb, IntPtr userdata);
 
