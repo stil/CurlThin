@@ -25,8 +25,8 @@
 // THE SOFTWARE.
 
 using System;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 using Curl.Enums;
 
 namespace Curl
@@ -43,14 +43,11 @@ namespace Curl
 
 	public class Easy : IDisposable
 	{
-		IntPtr handle;
-		internal IntPtr Handle {
-			get { return handle; }
-		}
+	    internal IntPtr Handle { get; private set; }
 
-		public Easy ()
+	    public Easy ()
 		{
-			handle = Native.Easy.Init ();
+			Handle = Native.Easy.Init ();
 		}
 
 		~Easy ()
@@ -66,22 +63,22 @@ namespace Curl
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (handle != IntPtr.Zero) {
-				Native.Easy.Cleanup (handle);
-				handle = IntPtr.Zero;
+			if (Handle != IntPtr.Zero) {
+				Native.Easy.Cleanup (Handle);
+				Handle = IntPtr.Zero;
 			}
 		}
 
-		void CheckDisposed ()
+	    private void CheckDisposed ()
 		{
-			if (handle == IntPtr.Zero)
-				throw new ObjectDisposedException ("Curl.Easy");
+			if (Handle == IntPtr.Zero)
+				throw new ObjectDisposedException (nameof(Easy));
 		}
 
 		public void Perform ()
 		{
 			CheckDisposed ();
-			var code = Native.Easy.Perform (handle);
+			var code = Native.Easy.Perform (Handle);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -89,7 +86,7 @@ namespace Curl
 		internal void SetOpt (CURLoption option, int value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (handle, option, value);
+			var code = Native.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -97,7 +94,7 @@ namespace Curl
 		internal void SetOpt (CURLoption option, string value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (handle, option, value);
+			var code = Native.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -105,7 +102,7 @@ namespace Curl
 		internal void SetOpt (CURLoption option, IntPtr value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (handle, option, value);
+			var code = Native.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -113,7 +110,7 @@ namespace Curl
 		internal void SetOpt (CURLoption option, Native.Easy.DataHandler value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (handle, option, value);
+			var code = Native.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -121,9 +118,8 @@ namespace Curl
 		internal int GetInfoInt32 (CURLINFO info)
 		{
 			CheckDisposed ();
-			int value;
-			var code = Native.Easy.GetInfo (handle, info, out value);
-			if (code != CURLcode.OK)
+            var code = Native.Easy.GetInfo(Handle, info, out int value);
+            if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
@@ -131,9 +127,8 @@ namespace Curl
 		internal IntPtr GetInfoIntPtr (CURLINFO info)
 		{
 			CheckDisposed ();
-			IntPtr value;
-			var code = Native.Easy.GetInfo (handle, info, out value);
-			if (code != CURLcode.OK)
+            var code = Native.Easy.GetInfo(Handle, info, out IntPtr value);
+            if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
@@ -141,14 +136,13 @@ namespace Curl
 		internal double GetInfoDouble (CURLINFO info)
 		{
 			CheckDisposed ();
-			double value;
-			var code = Native.Easy.GetInfo (handle, info, out value);
-			if (code != CURLcode.OK)
+            var code = Native.Easy.GetInfo(Handle, info, out double value);
+            if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
 		}
 
-	    UIntPtr NativeWriteHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
+	    private UIntPtr NativeWriteHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
 		{
 			var length = (int)size * (int)nmemb;
 
@@ -161,7 +155,7 @@ namespace Curl
 			return (UIntPtr)length;
 		}
 
-	    UIntPtr NativeHeaderHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
+	    private UIntPtr NativeHeaderHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata)
 		{
 			var length = (int)size * (int)nmemb;
 
@@ -174,24 +168,24 @@ namespace Curl
 			return (UIntPtr)length;
 		}
 
-		void ParseHeader (string header, HeaderHandler handler)
+	    private void ParseHeader (string header, HeaderHandler handler)
 		{
 			if (handler == null)
-				throw new ArgumentNullException ("handler");
+				throw new ArgumentNullException (nameof(handler));
 
 			if (header == null) {
 				return;
-			} else if (header == "\r\n") {
-				handler (HeaderKind.BodyDelimiter, null, null);
-				return;
 			}
+		    if (header == "\r\n") {
+		        handler (HeaderKind.BodyDelimiter, null, null);
+		        return;
+		    }
 
-			header = header.TrimEnd ('\r', '\n');
+		    header = header.TrimEnd ('\r', '\n');
 			var colonOffset = header.IndexOf (':');
 
 			if (header.StartsWith ("HTTP/") && colonOffset < 0) {
 				handler (HeaderKind.Status, header, null);
-				return;
 			} else if (colonOffset > 0) {
 				handler (HeaderKind.KeyValue,
 					header.Substring (0, colonOffset).Trim (),
@@ -200,16 +194,16 @@ namespace Curl
 			}
 		}
 
-		string url;
+	    private string url;
 		public string Url {
-			get { return url; }
-			set { SetOpt (CURLoption.URL, value); url = value; }
+			get => url;
+		    set { SetOpt (CURLoption.URL, value); url = value; }
 		}
 
-		DataHandler dataHandler;
+	    private DataHandler dataHandler;
 		public DataHandler WriteHandler {
-			get { return dataHandler; }
-			set {
+			get => dataHandler;
+		    set {
 				dataHandler = value;
 				if (value == null)
 					SetOpt (CURLoption.WRITEFUNCTION, IntPtr.Zero);
@@ -218,10 +212,10 @@ namespace Curl
 			}
 		}
 
-		HeaderHandler headerHandler;
+	    private HeaderHandler headerHandler;
 		public HeaderHandler HeaderHandler {
-			get { return headerHandler; }
-			set {
+			get => headerHandler;
+		    set {
 				headerHandler = value;
 				if (value == null)
 					SetOpt (CURLoption.HEADERFUNCTION, IntPtr.Zero);
@@ -230,37 +224,37 @@ namespace Curl
 			}
 		}
 
-		CURLPROTO protocols;
+	    private CURLPROTO protocols;
 		public CURLPROTO Protocols {
-			get { return protocols; }
-			set {
+			get => protocols;
+		    set {
 				SetOpt (CURLoption.PROTOCOLS, (int)value);
 				protocols = value;
 			}
 		}
 
-		bool followLocation;
+	    private bool followLocation;
 		public bool FollowLocation {
-			get { return followLocation; }
-			set {
+			get => followLocation;
+		    set {
 				SetOpt (CURLoption.FOLLOWLOCATION, value ? 1 : 0);
 				followLocation = value;
 			}
 		}
 
-		bool autoReferer;
+	    private bool autoReferer;
 		public bool AutoReferer {
-			get { return autoReferer; }
-			set {
+			get => autoReferer;
+		    set {
 				SetOpt (CURLoption.AUTOREFERER, value ? 1 : 0);
 				autoReferer = value;
 			}
 		}
 
-		Version httpVersion;
+	    private Version httpVersion;
 		public Version HttpVersion {
-			get { return httpVersion; }
-			set {
+			get => httpVersion;
+		    set {
 				if (value.Major == 1 && (value.Minor == 0 || value.Minor == 1)) {
 					SetOpt (CURLoption.HTTP_VERSION, value.Minor + 1);
 					httpVersion = value;
@@ -271,10 +265,10 @@ namespace Curl
 			}
 		}
 
-		string httpMethod;
+	    private string httpMethod;
 		public string HttpMethod {
-			get { return httpMethod; }
-			set {
+			get => httpMethod;
+		    set {
 				var m = (value ?? "GET").ToUpper ();
 
 				switch (m) {
@@ -295,8 +289,6 @@ namespace Curl
 			}
 		}
 
-		public int ResponseCode {
-			get { return GetInfoInt32 (CURLINFO.RESPONSE_CODE); }
-		}
+		public int ResponseCode => GetInfoInt32 (CURLINFO.RESPONSE_CODE);
 	}
 }

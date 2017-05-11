@@ -31,13 +31,13 @@ namespace Curl
 {
 	internal class CurlResponseStream : Stream
 	{
-		Multi multi;
-		long length;
-		long position;
-		byte [] buffer = new byte [4096];
-		int bufferWritePosition;
-		int bufferLength;
-		bool haveData;
+	    private Multi multi;
+	    private long length;
+	    private long position;
+	    private byte [] buffer = new byte [4096];
+	    private int bufferWritePosition;
+	    private int bufferLength;
+	    private bool haveData;
 
 		public CurlResponseStream (Easy easy) : this (new Multi { easy }, easy)
 		{
@@ -46,15 +46,15 @@ namespace Curl
 		public CurlResponseStream (Multi multi, Easy easy)
 		{
 			if (multi == null)
-				throw new ArgumentNullException ("multi");
-			else if (easy == null)
-				throw new ArgumentNullException ("easy");
+				throw new ArgumentNullException (nameof(multi));
+		    if (easy == null)
+		        throw new ArgumentNullException (nameof(easy));
 
-			this.multi = multi;
+		    this.multi = multi;
 			easy.WriteHandler = AppendBuffer;
 		}
 
-		void CheckDisposed ()
+	    private void CheckDisposed ()
 		{
 			if (multi == null)
 				throw new ObjectDisposedException ("CurlResponseStream");
@@ -69,7 +69,7 @@ namespace Curl
 			}
 		}
 
-		void AppendBuffer (byte [] data)
+	    private void AppendBuffer (byte [] data)
 		{
 			CheckDisposed ();
 
@@ -93,15 +93,15 @@ namespace Curl
 		public override int Read (byte [] buffer, int offset, int count)
 		{
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-			else if (offset < 0 || offset >= buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-			else if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
-			else if (offset + count > buffer.Length)
-				throw new ArgumentException ("sum of offset and count is larger than the buffer length");
+				throw new ArgumentNullException (nameof(buffer));
+		    if (offset < 0 || offset >= buffer.Length)
+		        throw new ArgumentOutOfRangeException (nameof(offset));
+		    if (count < 0)
+		        throw new ArgumentOutOfRangeException (nameof(count));
+		    if (offset + count > buffer.Length)
+		        throw new ArgumentException ("sum of offset and count is larger than the buffer length");
 
-			CheckDisposed ();
+		    CheckDisposed ();
 
 			while (!haveData || (bufferLength == 0 && multi.HandlesRemaining > 0))
 				multi.AutoPerformWithSelect ();
@@ -122,28 +122,20 @@ namespace Curl
 			return count;
 		}
 
-		public override long Length {
-			get { return length; }
+		public override long Length => length;
+
+	    public override long Position {
+			get => position;
+		    set => throw new NotImplementedException ();
 		}
 
-		public override long Position {
-			get { return position; }
-			set { throw new NotImplementedException (); }
-		}
+		public override bool CanRead => true;
 
-		public override bool CanRead {
-			get { return true; }
-		}
+	    public override bool CanSeek => false;
 
-		public override bool CanSeek {
-			get { return false; }
-		}
+	    public override bool CanWrite => false;
 
-		public override bool CanWrite {
-			get { return false; }
-		}
-
-		public override void Flush ()
+	    public override void Flush ()
 		{
 		}
 

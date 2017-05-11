@@ -32,7 +32,7 @@ namespace Curl
 {
 	public static class Native
 	{
-		const string LIBCURL = "libcurl";
+	    private const string LIBCURL = "libcurl";
 
 	    [DllImport(LIBCURL, EntryPoint = "curl_global_init")]
 	    public static extern CURLcode Init(CURLglobal flags = CURLglobal.DEFAULT);
@@ -101,24 +101,24 @@ namespace Curl
 
 		public class Select : IDisposable
 		{
-			const int FD_SETSIZE = 32; // __DARWIN_FD_SETSIZE
+		    private const int FD_SETSIZE = 32; // __DARWIN_FD_SETSIZE
 
-			struct timeval {
+		    private struct timeval {
 				public int tv_sec;
 				public int tv_usec;
 			}
 
 			[DllImport ("libc")]
-			static extern int select (int nfds, IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref timeval timeout);
+			private static extern int select (int nfds, IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref timeval timeout);
 
 			[DllImport ("libc")]
-			static extern IntPtr memset (IntPtr b, int c, IntPtr len);
+			private static extern IntPtr memset (IntPtr b, int c, IntPtr len);
 
 			public delegate bool SetFdsHandler (IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds);
 
-			IntPtr readfds = Marshal.AllocHGlobal (FD_SETSIZE);
-			IntPtr writefds = Marshal.AllocHGlobal (FD_SETSIZE);
-			IntPtr errorfds = Marshal.AllocHGlobal (FD_SETSIZE);
+		    private IntPtr readfds = Marshal.AllocHGlobal (FD_SETSIZE);
+		    private IntPtr writefds = Marshal.AllocHGlobal (FD_SETSIZE);
+		    private IntPtr errorfds = Marshal.AllocHGlobal (FD_SETSIZE);
 
 			~Select ()
 			{

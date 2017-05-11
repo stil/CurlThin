@@ -31,7 +31,7 @@ namespace Curl
 {
 	public class CurlException : Exception
 	{
-		public CurlException (string format, params object [] args) : base (String.Format (format, args))
+		public CurlException (string format, params object [] args) : base (string.Format (format, args))
 		{
 		}
 

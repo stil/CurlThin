@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Curl.Enums;
 
@@ -38,16 +39,14 @@ namespace Curl
 			PerformAgainNow
 		}
 
-		IntPtr handle;
-		List<Easy> children = new List<Easy> ();
-		Native.Select select = new Native.Select ();
+	    private IntPtr handle;
+	    private List<Easy> children = new List<Easy> ();
+	    private Native.Select select = new Native.Select ();
 
-		int handlesRemaining;
-		public int HandlesRemaining {
-			get { return handlesRemaining; }
-		}
+	    private int handlesRemaining;
+		public int HandlesRemaining => handlesRemaining;
 
-		public TimeSpan Timeout { get; set; }
+	    public TimeSpan Timeout { get; set; }
 
 		public Multi ()
 		{
@@ -87,13 +86,13 @@ namespace Curl
 			}
 		}
 
-		void CheckDisposed ()
+	    private void CheckDisposed ()
 		{
 			if (handle == IntPtr.Zero || select == null)
 				throw new ObjectDisposedException ("Curl.Easy");
 		}
 
-		void Invoke (Func<CURLMcode> call)
+	    private void Invoke (Func<CURLMcode> call)
 		{
 			CheckDisposed ();
 			var code = call ();
@@ -104,7 +103,7 @@ namespace Curl
 		public void Add (Easy easy)
 		{
 			if (easy == null)
-				throw new ArgumentNullException ("easy");
+				throw new ArgumentNullException (nameof(easy));
 
 			CheckDisposed ();
 
@@ -123,7 +122,7 @@ namespace Curl
 		public void Remove (Easy easy)
 		{
 			if (easy == null)
-				throw new ArgumentNullException ("easy");
+				throw new ArgumentNullException (nameof(easy));
 
 			CheckDisposed ();
 
@@ -146,9 +145,9 @@ namespace Curl
 					var code = Native.Multi.Timeout (handle, ref curlTimeout);
 					if (code != CURLMcode.OK)
 						throw new CurlException (code);
-					else if (curlTimeout >= 0)
-						return TimeSpan.FromMilliseconds (curlTimeout);
-					return Timeout;
+				    if (curlTimeout >= 0)
+				        return TimeSpan.FromMilliseconds (curlTimeout);
+				    return Timeout;
 				},
 
 				setFds: (IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds) => {
@@ -184,7 +183,7 @@ namespace Curl
 				yield return child;
 		}
 
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return GetEnumerator ();
 		}
