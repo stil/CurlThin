@@ -43,11 +43,9 @@ namespace Curl
 		Native.Select select = new Native.Select ();
 
 		int handlesRemaining;
-		public int HandlesRemaining {
-			get { return handlesRemaining; }
-		}
+		public int HandlesRemaining => handlesRemaining;
 
-		public TimeSpan Timeout { get; set; }
+	    public TimeSpan Timeout { get; set; }
 
 		public Multi ()
 		{

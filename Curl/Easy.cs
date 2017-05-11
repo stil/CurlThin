@@ -199,14 +199,14 @@ namespace Curl
 
 		string url;
 		public string Url {
-			get { return url; }
-			set { SetOpt (CURLoption.URL, value); url = value; }
+			get => url;
+		    set { SetOpt (CURLoption.URL, value); url = value; }
 		}
 
 		DataHandler dataHandler;
 		public DataHandler WriteHandler {
-			get { return dataHandler; }
-			set {
+			get => dataHandler;
+		    set {
 				dataHandler = value;
 				if (value == null)
 					SetOpt (CURLoption.WRITEFUNCTION, IntPtr.Zero);
@@ -217,8 +217,8 @@ namespace Curl
 
 		HeaderHandler headerHandler;
 		public HeaderHandler HeaderHandler {
-			get { return headerHandler; }
-			set {
+			get => headerHandler;
+		    set {
 				headerHandler = value;
 				if (value == null)
 					SetOpt (CURLoption.HEADERFUNCTION, IntPtr.Zero);
@@ -229,8 +229,8 @@ namespace Curl
 
 		CURLPROTO protocols;
 		public CURLPROTO Protocols {
-			get { return protocols; }
-			set {
+			get => protocols;
+		    set {
 				SetOpt (CURLoption.PROTOCOLS, (int)value);
 				protocols = value;
 			}
@@ -238,8 +238,8 @@ namespace Curl
 
 		bool followLocation;
 		public bool FollowLocation {
-			get { return followLocation; }
-			set {
+			get => followLocation;
+		    set {
 				SetOpt (CURLoption.FOLLOWLOCATION, value ? 1 : 0);
 				followLocation = value;
 			}
@@ -247,8 +247,8 @@ namespace Curl
 
 		bool autoReferer;
 		public bool AutoReferer {
-			get { return autoReferer; }
-			set {
+			get => autoReferer;
+		    set {
 				SetOpt (CURLoption.AUTOREFERER, value ? 1 : 0);
 				autoReferer = value;
 			}
@@ -256,8 +256,8 @@ namespace Curl
 
 		Version httpVersion;
 		public Version HttpVersion {
-			get { return httpVersion; }
-			set {
+			get => httpVersion;
+		    set {
 				if (value.Major == 1 && (value.Minor == 0 || value.Minor == 1)) {
 					SetOpt (CURLoption.HTTP_VERSION, value.Minor + 1);
 					httpVersion = value;
@@ -270,8 +270,8 @@ namespace Curl
 
 		string httpMethod;
 		public string HttpMethod {
-			get { return httpMethod; }
-			set {
+			get => httpMethod;
+		    set {
 				var m = (value ?? "GET").ToUpper ();
 
 				switch (m) {
@@ -292,8 +292,6 @@ namespace Curl
 			}
 		}
 
-		public int ResponseCode {
-			get { return GetInfoInt32 (CURLINFO.RESPONSE_CODE); }
-		}
+		public int ResponseCode => GetInfoInt32 (CURLINFO.RESPONSE_CODE);
 	}
 }

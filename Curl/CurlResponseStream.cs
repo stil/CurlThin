@@ -122,28 +122,20 @@ namespace Curl
 			return count;
 		}
 
-		public override long Length {
-			get { return length; }
+		public override long Length => length;
+
+	    public override long Position {
+			get => position;
+		    set => throw new NotImplementedException ();
 		}
 
-		public override long Position {
-			get { return position; }
-			set { throw new NotImplementedException (); }
-		}
+		public override bool CanRead => true;
 
-		public override bool CanRead {
-			get { return true; }
-		}
+	    public override bool CanSeek => false;
 
-		public override bool CanSeek {
-			get { return false; }
-		}
+	    public override bool CanWrite => false;
 
-		public override bool CanWrite {
-			get { return false; }
-		}
-
-		public override void Flush ()
+	    public override void Flush ()
 		{
 		}
 
