@@ -52,7 +52,7 @@ namespace CurlThin
 			public static extern CURLcode Perform (IntPtr handle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
-			public static extern CURLcode SetOpt (IntPtr handle, CURLoption option, int value);
+			public static extern CURLcode SetOpt (IntPtr handle, CURLoption option, long value);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
 			public static extern CURLcode SetOpt (IntPtr handle, CURLoption option, IntPtr value);
