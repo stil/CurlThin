@@ -79,25 +79,25 @@ namespace CurlThin
 		public static class Multi
 		{
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_init")]
-			public static extern IntPtr Init ();
+			public static extern SafeMultiHandle Init ();
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_cleanup")]
 			public static extern CURLMcode Cleanup (IntPtr multiHandle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_add_handle")]
-			public static extern CURLMcode AddHandle (IntPtr multiHandle, SafeEasyHandle easyHandle);
+			public static extern CURLMcode AddHandle (SafeMultiHandle multiHandle, SafeEasyHandle easyHandle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_remove_handle")]
-			public static extern CURLMcode RemoveHandle (IntPtr multiHandle, SafeEasyHandle easyHandle);
+			public static extern CURLMcode RemoveHandle (SafeMultiHandle multiHandle, SafeEasyHandle easyHandle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_perform")]
-			public static extern CURLMcode Perform (IntPtr multiHandle, ref int runningHandles);
+			public static extern CURLMcode Perform (SafeMultiHandle multiHandle, ref int runningHandles);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_fdset")]
-			public static extern CURLMcode FdSet (IntPtr multiHandle, IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds);
+			public static extern CURLMcode FdSet (SafeMultiHandle multiHandle, IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_timeout")]
-			public static extern CURLMcode Timeout (IntPtr multiHandle, ref int timeout);
+			public static extern CURLMcode Timeout (SafeMultiHandle multiHandle, ref int timeout);
 		}
 
 		public class Select : IDisposable

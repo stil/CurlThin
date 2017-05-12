@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using CurlThin.Enums;
+using CurlThin.SafeHandles;
 
 namespace CurlThin
 {
@@ -39,7 +40,8 @@ namespace CurlThin
 			PerformAgainNow
 		}
 
-	    private IntPtr handle;
+	    private bool _disposed;
+        private SafeMultiHandle handle;
 	    private List<CurlEasy> children = new List<CurlEasy> ();
 	    private CurlNative.Select select = new CurlNative.Select ();
 
@@ -54,42 +56,39 @@ namespace CurlThin
 			Timeout = TimeSpan.FromSeconds (60);
 		}
 
-		~CurlMulti ()
+	    public void Dispose()
+	    {
+	        Dispose(true);
+	        GC.SuppressFinalize(this);
+	    }
+
+	    protected virtual void Dispose(bool disposing)
+	    {
+	        if (_disposed)
+	            return;
+
+	        if (disposing)
+	        {
+	            foreach (var child in children)
+	            {
+	                CurlNative.Multi.RemoveHandle(handle, child.Handle);
+	                child.Dispose();
+	            }
+
+	            children.Clear();
+                handle.Dispose();
+	            select?.Dispose();
+            }
+
+	        _disposed = true;
+	    }
+
+	    private void CheckDisposed()
 		{
-			Dispose (false);
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
-		protected virtual void Dispose (bool disposing)
-		{
-			if (handle != IntPtr.Zero) {
-				foreach (var child in children) {
-				    CurlNative.Multi.RemoveHandle (handle, child.Handle);
-					child.Dispose ();
-				}
-
-				children.Clear ();
-
-                // FIXME: what if this returns !OK?
-			    CurlNative.Multi.Cleanup (handle);
-				handle = IntPtr.Zero;
-			}
-
-			if (select != null) {
-				select.Dispose ();
-				select = null;
-			}
-		}
-
-	    private void CheckDisposed ()
-		{
-			if (handle == IntPtr.Zero || select == null)
-				throw new ObjectDisposedException ("Curl.Easy");
+		    if (_disposed)
+		    {
+		        throw new ObjectDisposedException(nameof(CurlMulti));
+            }
 		}
 
 	    private void Invoke (Func<CURLMcode> call)
