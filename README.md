@@ -1,4 +1,5 @@
 # CurlSharp #
+[![Nuget](https://img.shields.io/nuget/v/CurlThin.svg)](https://www.nuget.org/packages/CurlThin/)
 
 _CurlSharp_ is a modern C# (5.0/async) binding against
 [libcurl](http://curl.haxx.se/libcurl) with a
