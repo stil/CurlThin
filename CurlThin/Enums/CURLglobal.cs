@@ -2,7 +2,7 @@
 
 // ReSharper disable InconsistentNaming
 
-namespace Curl.Enums
+namespace CurlThin.Enums
 {
     /// <summary>
     ///     Contains values used to initialize libcurl internally. One of

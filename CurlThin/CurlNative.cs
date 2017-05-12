@@ -26,11 +26,11 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Curl.Enums;
+using CurlThin.Enums;
 
 namespace CurlThin
 {
-	public static class Native
+	public static class CurlNative
 	{
 	    private const string LIBCURL = "libcurl";
 

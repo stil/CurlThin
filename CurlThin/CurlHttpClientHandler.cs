@@ -28,7 +28,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Curl.Enums;
+using CurlThin.Enums;
 
 namespace CurlThin
 {
@@ -42,9 +42,9 @@ namespace CurlThin
 	    private HttpResponseMessage Send (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			HttpResponseMessage response = null;
-			Easy easy = null;
+			CurlEasy easy = null;
 
-			easy = new Easy {
+			easy = new CurlEasy {
 				Protocols = CURLPROTO.HTTP | CURLPROTO.HTTPS,
 				Url = request.RequestUri.AbsoluteUri,
 				AutoReferer = true,

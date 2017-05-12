@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 
 using System;
-using Curl.Enums;
+using CurlThin.Enums;
 
 namespace CurlThin
 {

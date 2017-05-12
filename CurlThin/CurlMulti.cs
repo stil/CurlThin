@@ -27,11 +27,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Curl.Enums;
+using CurlThin.Enums;
 
 namespace CurlThin
 {
-	public class Multi : IDisposable, IEnumerable<Easy>
+	public class CurlMulti : IDisposable, IEnumerable<CurlEasy>
 	{
 		public enum PerformResult
 		{
@@ -40,21 +40,21 @@ namespace CurlThin
 		}
 
 	    private IntPtr handle;
-	    private List<Easy> children = new List<Easy> ();
-	    private Native.Select select = new Native.Select ();
+	    private List<CurlEasy> children = new List<CurlEasy> ();
+	    private CurlNative.Select select = new CurlNative.Select ();
 
 	    private int handlesRemaining;
 		public int HandlesRemaining => handlesRemaining;
 
 	    public TimeSpan Timeout { get; set; }
 
-		public Multi ()
+		public CurlMulti ()
 		{
-			handle = Native.Multi.Init ();
+			handle = CurlNative.Multi.Init ();
 			Timeout = TimeSpan.FromSeconds (60);
 		}
 
-		~Multi ()
+		~CurlMulti ()
 		{
 			Dispose (false);
 		}
@@ -69,14 +69,14 @@ namespace CurlThin
 		{
 			if (handle != IntPtr.Zero) {
 				foreach (var child in children) {
-					Native.Multi.RemoveHandle (handle, child.Handle);
+				    CurlNative.Multi.RemoveHandle (handle, child.Handle);
 					child.Dispose ();
 				}
 
 				children.Clear ();
 
-				// FIXME: what if this returns !OK?
-				Native.Multi.Cleanup (handle);
+                // FIXME: what if this returns !OK?
+			    CurlNative.Multi.Cleanup (handle);
 				handle = IntPtr.Zero;
 			}
 
@@ -100,7 +100,7 @@ namespace CurlThin
 				throw new CurlException (code);
 		}
 
-		public void Add (Easy easy)
+		public void Add (CurlEasy easy)
 		{
 			if (easy == null)
 				throw new ArgumentNullException (nameof(easy));
@@ -112,14 +112,14 @@ namespace CurlThin
 			if (easyHandle == IntPtr.Zero)
 				throw new ObjectDisposedException ("Easy object already disposed");
 
-			var code = Native.Multi.AddHandle (handle, easyHandle);
+			var code = CurlNative.Multi.AddHandle (handle, easyHandle);
 			if (code != CURLMcode.OK)
 				throw new CurlException (code);
 
 			children.Add (easy);
 		}
 
-		public void Remove (Easy easy)
+		public void Remove (CurlEasy easy)
 		{
 			if (easy == null)
 				throw new ArgumentNullException (nameof(easy));
@@ -129,7 +129,7 @@ namespace CurlThin
 			var easyHandle = easy.Handle;
 
 			if (children.Remove (easy) && easyHandle != IntPtr.Zero) {
-				var code = Native.Multi.RemoveHandle (handle, easyHandle);
+				var code = CurlNative.Multi.RemoveHandle (handle, easyHandle);
 				if (code != CURLMcode.OK)
 					throw new CurlException (code);
 			}
@@ -142,7 +142,7 @@ namespace CurlThin
 			select.Perform (
 				requestedTimeout: () => {
 					int curlTimeout = -1;
-					var code = Native.Multi.Timeout (handle, ref curlTimeout);
+					var code = CurlNative.Multi.Timeout (handle, ref curlTimeout);
 					if (code != CURLMcode.OK)
 						throw new CurlException (code);
 				    if (curlTimeout >= 0)
@@ -151,7 +151,7 @@ namespace CurlThin
 				},
 
 				setFds: (IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds) => {
-					var code = Native.Multi.FdSet (handle, readfds, writefds, errorfds, ref maxfds);
+					var code = CurlNative.Multi.FdSet (handle, readfds, writefds, errorfds, ref maxfds);
 					if (code != CURLMcode.OK)
 						throw new CurlException (code);
 					return true;
@@ -165,7 +165,7 @@ namespace CurlThin
 		{
 			CheckDisposed ();
 
-			var code = Native.Multi.Perform (handle, ref handlesRemaining);
+			var code = CurlNative.Multi.Perform (handle, ref handlesRemaining);
 
 			switch (code) {
 			case CURLMcode.CALL_MULTI_PERFORM:
@@ -177,7 +177,7 @@ namespace CurlThin
 			}
 		}
 
-		public IEnumerator<Easy> GetEnumerator ()
+		public IEnumerator<CurlEasy> GetEnumerator ()
 		{
 			foreach (var child in children)
 				yield return child;

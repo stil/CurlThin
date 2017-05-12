@@ -31,7 +31,7 @@ namespace CurlThin
 {
 	internal class CurlResponseStream : Stream
 	{
-	    private Multi multi;
+	    private CurlMulti multi;
 	    private long length;
 	    private long position;
 	    private byte [] buffer = new byte [4096];
@@ -39,11 +39,11 @@ namespace CurlThin
 	    private int bufferLength;
 	    private bool haveData;
 
-		public CurlResponseStream (Easy easy) : this (new Multi { easy }, easy)
+		public CurlResponseStream (CurlEasy easy) : this (new CurlMulti { easy }, easy)
 		{
 		}
 
-		public CurlResponseStream (Multi multi, Easy easy)
+		public CurlResponseStream (CurlMulti multi, CurlEasy easy)
 		{
 			if (multi == null)
 				throw new ArgumentNullException (nameof(multi));

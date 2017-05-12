@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Curl.Enums
+namespace CurlThin.Enums
 {
     [Flags]
 	public enum CURLPROTO

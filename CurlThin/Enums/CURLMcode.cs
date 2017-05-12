@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
-namespace Curl.Enums
+namespace CurlThin.Enums
 {
     public enum CURLMcode
     {

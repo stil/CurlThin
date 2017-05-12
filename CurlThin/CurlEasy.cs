@@ -27,7 +27,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Curl.Enums;
+using CurlThin.Enums;
 
 namespace CurlThin
 {
@@ -41,16 +41,16 @@ namespace CurlThin
 	public delegate void DataHandler (byte [] data);
 	public delegate void HeaderHandler (HeaderKind kind, string name, string value);
 
-	public class Easy : IDisposable
+	public class CurlEasy : IDisposable
 	{
 	    internal IntPtr Handle { get; private set; }
 
-	    public Easy ()
+	    public CurlEasy ()
 		{
-			Handle = Native.Easy.Init ();
+			Handle = CurlNative.Easy.Init ();
 		}
 
-		~Easy ()
+		~CurlEasy ()
 		{
 			Dispose (false);
 		}
@@ -64,7 +64,7 @@ namespace CurlThin
 		protected virtual void Dispose (bool disposing)
 		{
 			if (Handle != IntPtr.Zero) {
-				Native.Easy.Cleanup (Handle);
+			    CurlNative.Easy.Cleanup (Handle);
 				Handle = IntPtr.Zero;
 			}
 		}
@@ -72,13 +72,13 @@ namespace CurlThin
 	    private void CheckDisposed ()
 		{
 			if (Handle == IntPtr.Zero)
-				throw new ObjectDisposedException (nameof(Easy));
+				throw new ObjectDisposedException (nameof(CurlEasy));
 		}
 
 		public void Perform ()
 		{
 			CheckDisposed ();
-			var code = Native.Easy.Perform (Handle);
+			var code = CurlNative.Easy.Perform (Handle);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -86,7 +86,7 @@ namespace CurlThin
 		internal void SetOpt (CURLoption option, int value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (Handle, option, value);
+			var code = CurlNative.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -94,7 +94,7 @@ namespace CurlThin
 		internal void SetOpt (CURLoption option, string value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (Handle, option, value);
+			var code = CurlNative.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -102,15 +102,15 @@ namespace CurlThin
 		internal void SetOpt (CURLoption option, IntPtr value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (Handle, option, value);
+			var code = CurlNative.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
 
-		internal void SetOpt (CURLoption option, Native.Easy.DataHandler value)
+		internal void SetOpt (CURLoption option, CurlNative.Easy.DataHandler value)
 		{
 			CheckDisposed ();
-			var code = Native.Easy.SetOpt (Handle, option, value);
+			var code = CurlNative.Easy.SetOpt (Handle, option, value);
 			if (code != CURLcode.OK)
 				throw new CurlException (code);
 		}
@@ -118,7 +118,7 @@ namespace CurlThin
 		internal int GetInfoInt32 (CURLINFO info)
 		{
 			CheckDisposed ();
-            var code = Native.Easy.GetInfo(Handle, info, out int value);
+            var code = CurlNative.Easy.GetInfo(Handle, info, out int value);
             if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
@@ -127,7 +127,7 @@ namespace CurlThin
 		internal IntPtr GetInfoIntPtr (CURLINFO info)
 		{
 			CheckDisposed ();
-            var code = Native.Easy.GetInfo(Handle, info, out IntPtr value);
+            var code = CurlNative.Easy.GetInfo(Handle, info, out IntPtr value);
             if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
@@ -136,7 +136,7 @@ namespace CurlThin
 		internal double GetInfoDouble (CURLINFO info)
 		{
 			CheckDisposed ();
-            var code = Native.Easy.GetInfo(Handle, info, out double value);
+            var code = CurlNative.Easy.GetInfo(Handle, info, out double value);
             if (code != CURLcode.OK)
 				throw new CurlException (code);
 			return value;
