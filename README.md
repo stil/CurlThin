@@ -1,14 +1,14 @@
-# CurlSharp #
+# CurlThin #
 [![Nuget](https://img.shields.io/nuget/v/CurlThin.svg)](https://www.nuget.org/packages/CurlThin/)
 
-_CurlSharp_ is a modern C# (5.0/async) binding against
+_CurlThin_ is a modern C# (5.0/async) binding against
 [libcurl](http://curl.haxx.se/libcurl) with a
 `System.Net.Http.HttpMessageHandler` implementation for
 use with .NET 4.5's `System.Net.Http.HttpClient`.
 
 ## Incomplete, Barely Tested, Proof of Concept ##
 
-_CurlSharp_ is a brand new project hacked on in spare time (started Jan 7,
+_CurlThin_ is a brand new project hacked on in spare time (started Jan 7,
 2014). It's sort of an itch scratcher that may prove genuinely useful at
 some point (e.g. to avoid using the default `System.Net.HttpWebRequest`
 backend when using `System.Net.Http.HttpClient`, which has its own set
