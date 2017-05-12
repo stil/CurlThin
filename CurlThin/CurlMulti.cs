@@ -109,7 +109,7 @@ namespace CurlThin
 
 			var easyHandle = easy.Handle;
 
-			if (easyHandle == IntPtr.Zero)
+			if (easyHandle.IsInvalid)
 				throw new ObjectDisposedException ("Easy object already disposed");
 
 			var code = CurlNative.Multi.AddHandle (handle, easyHandle);
@@ -128,7 +128,7 @@ namespace CurlThin
 
 			var easyHandle = easy.Handle;
 
-			if (children.Remove (easy) && easyHandle != IntPtr.Zero) {
+			if (children.Remove (easy) && !easyHandle.IsInvalid) {
 				var code = CurlNative.Multi.RemoveHandle (handle, easyHandle);
 				if (code != CURLMcode.OK)
 					throw new CurlException (code);

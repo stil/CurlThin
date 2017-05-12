@@ -47,10 +47,7 @@ namespace CurlThin.Samples.Native
             }
             finally
             {
-                if (easy != IntPtr.Zero)
-                {
-                    CurlNative.Easy.Cleanup(easy);
-                }
+                easy.Dispose();
 
                 if (global == CURLcode.OK)
                 {

@@ -28,6 +28,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using CurlThin.Enums;
+using CurlThin.SafeHandles;
 
 namespace CurlThin
 {
@@ -43,36 +44,40 @@ namespace CurlThin
 
 	public class CurlEasy : IDisposable
 	{
-	    internal IntPtr Handle { get; private set; }
+	    private bool _disposed;
 
-	    public CurlEasy ()
+        internal SafeEasyHandle Handle { get; }
+
+	    public CurlEasy()
 		{
-			Handle = CurlNative.Easy.Init ();
+			Handle = CurlNative.Easy.Init();
 		}
-
-		~CurlEasy ()
+        
+		public void Dispose()
 		{
-			Dispose (false);
-		}
+		    Dispose(true);
+		    GC.SuppressFinalize(this);
+        }
 
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
+	    protected virtual void Dispose(bool disposing)
+	    {
+	        if (_disposed)
+	            return;
 
-		protected virtual void Dispose (bool disposing)
-		{
-			if (Handle != IntPtr.Zero) {
-			    CurlNative.Easy.Cleanup (Handle);
-				Handle = IntPtr.Zero;
-			}
-		}
+	        if (disposing)
+	        {
+                Handle.Dispose();
+	        }
+            
+	        _disposed = true;
+	    }
 
-	    private void CheckDisposed ()
+        private void CheckDisposed()
 		{
-			if (Handle == IntPtr.Zero)
-				throw new ObjectDisposedException (nameof(CurlEasy));
+		    if (_disposed)
+		    {
+		        throw new ObjectDisposedException(nameof(CurlEasy));
+		    }
 		}
 
 		public void Perform ()

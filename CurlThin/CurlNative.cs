@@ -27,6 +27,7 @@
 using System;
 using System.Runtime.InteropServices;
 using CurlThin.Enums;
+using CurlThin.SafeHandles;
 
 namespace CurlThin
 {
@@ -43,36 +44,36 @@ namespace CurlThin
         public static class Easy
 		{
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_init")]
-			public static extern IntPtr Init ();
+			public static extern SafeEasyHandle Init ();
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_cleanup")]
 			public static extern void Cleanup (IntPtr handle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_perform")]
-			public static extern CURLcode Perform (IntPtr handle);
+			public static extern CURLcode Perform (SafeEasyHandle handle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
-			public static extern CURLcode SetOpt (IntPtr handle, CURLoption option, long value);
+			public static extern CURLcode SetOpt (SafeEasyHandle handle, CURLoption option, long value);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
-			public static extern CURLcode SetOpt (IntPtr handle, CURLoption option, IntPtr value);
+			public static extern CURLcode SetOpt (SafeEasyHandle handle, CURLoption option, IntPtr value);
 
 		    [DllImport(LIBCURL, EntryPoint = "curl_easy_setopt", CharSet = CharSet.Ansi)]
-            public static extern CURLcode SetOpt (IntPtr handle, CURLoption option, string value);
+            public static extern CURLcode SetOpt (SafeEasyHandle handle, CURLoption option, string value);
 
 			public delegate UIntPtr DataHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
-			public static extern CURLcode SetOpt (IntPtr handle, CURLoption option, DataHandler value);
+			public static extern CURLcode SetOpt (SafeEasyHandle handle, CURLoption option, DataHandler value);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_getinfo")]
-			public static extern CURLcode GetInfo (IntPtr handle, CURLINFO option, out int value);
+			public static extern CURLcode GetInfo (SafeEasyHandle handle, CURLINFO option, out int value);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_getinfo")]
-			public static extern CURLcode GetInfo (IntPtr handle, CURLINFO option, out IntPtr value);
+			public static extern CURLcode GetInfo (SafeEasyHandle handle, CURLINFO option, out IntPtr value);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_easy_getinfo")]
-			public static extern CURLcode GetInfo (IntPtr handle, CURLINFO option, out double value);
+			public static extern CURLcode GetInfo (SafeEasyHandle handle, CURLINFO option, out double value);
 		}
 
 		public static class Multi
@@ -84,10 +85,10 @@ namespace CurlThin
 			public static extern CURLMcode Cleanup (IntPtr multiHandle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_add_handle")]
-			public static extern CURLMcode AddHandle (IntPtr multiHandle, IntPtr easyHandle);
+			public static extern CURLMcode AddHandle (IntPtr multiHandle, SafeEasyHandle easyHandle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_remove_handle")]
-			public static extern CURLMcode RemoveHandle (IntPtr multiHandle, IntPtr easyHandle);
+			public static extern CURLMcode RemoveHandle (IntPtr multiHandle, SafeEasyHandle easyHandle);
 
 			[DllImport (LIBCURL, EntryPoint = "curl_multi_perform")]
 			public static extern CURLMcode Perform (IntPtr multiHandle, ref int runningHandles);
