@@ -30,7 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Curl.Enums;
 
-namespace Curl
+namespace CurlThin
 {
 	public class CurlHttpClientHandler : HttpMessageHandler
 	{

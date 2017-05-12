@@ -28,7 +28,7 @@ using System;
 using System.Runtime.InteropServices;
 using Curl.Enums;
 
-namespace Curl
+namespace CurlThin
 {
 	public static class Native
 	{
