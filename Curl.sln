@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Curl", "Curl\Curl.csproj", "{12E39CD9-CD1E-423A-9689-CF2274B2FB8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurlThin.Native", "CurlThin.Native\CurlThin.Native.csproj", "{F50DF089-F0F9-464B-97BB-8EBA9BDF7B4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{12E39CD9-CD1E-423A-9689-CF2274B2FB8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12E39CD9-CD1E-423A-9689-CF2274B2FB8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12E39CD9-CD1E-423A-9689-CF2274B2FB8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F50DF089-F0F9-464B-97BB-8EBA9BDF7B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F50DF089-F0F9-464B-97BB-8EBA9BDF7B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F50DF089-F0F9-464B-97BB-8EBA9BDF7B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F50DF089-F0F9-464B-97BB-8EBA9BDF7B4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
