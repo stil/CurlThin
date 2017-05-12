@@ -27,7 +27,7 @@
 using System;
 using System.IO;
 
-namespace Curl
+namespace CurlThin
 {
 	internal class CurlResponseStream : Stream
 	{

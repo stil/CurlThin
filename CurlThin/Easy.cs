@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Curl.Enums;
 
-namespace Curl
+namespace CurlThin
 {
 	public enum HeaderKind
 	{

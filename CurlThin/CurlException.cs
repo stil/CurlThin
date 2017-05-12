@@ -27,7 +27,7 @@
 using System;
 using Curl.Enums;
 
-namespace Curl
+namespace CurlThin
 {
 	public class CurlException : Exception
 	{

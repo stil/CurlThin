@@ -29,7 +29,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Curl.Enums;
 
-namespace Curl
+namespace CurlThin
 {
 	public class Multi : IDisposable, IEnumerable<Easy>
 	{
