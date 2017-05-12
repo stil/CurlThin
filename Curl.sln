@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurlThin.Native", "CurlThin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CurlThin", "CurlThin\CurlThin.csproj", "{72DCABEB-E6BB-4213-A710-64EF7089460C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CurlThin.Tests", "CurlThin.Tests\CurlThin.Tests.csproj", "{E95EB360-DD7E-4324-B27C-73D99FD9DBFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurlThin.Samples", "CurlThin.Samples\CurlThin.Samples.csproj", "{E4CB73A4-8984-4341-AEDC-CE8AA1598BA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{72DCABEB-E6BB-4213-A710-64EF7089460C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72DCABEB-E6BB-4213-A710-64EF7089460C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72DCABEB-E6BB-4213-A710-64EF7089460C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E95EB360-DD7E-4324-B27C-73D99FD9DBFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E95EB360-DD7E-4324-B27C-73D99FD9DBFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E95EB360-DD7E-4324-B27C-73D99FD9DBFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E95EB360-DD7E-4324-B27C-73D99FD9DBFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4CB73A4-8984-4341-AEDC-CE8AA1598BA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4CB73A4-8984-4341-AEDC-CE8AA1598BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4CB73A4-8984-4341-AEDC-CE8AA1598BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4CB73A4-8984-4341-AEDC-CE8AA1598BA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
