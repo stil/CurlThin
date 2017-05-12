@@ -28,26 +28,27 @@ experience in .NET. This is the easiest and recommended way to use this
 library.
 
 ```csharp
-var client = new HttpClient (new CurlHttpClientHandler ());
-var cats = client.GetStringAsync ("http://catoverflow.com/api/query").Result;
-Console.WriteLine (cats);
+var client = new HttpClient(new CurlHttpClientHandler());
+var cats = client.GetStringAsync("http://catoverflow.com/api/query").Result;
+Console.WriteLine(cats);
 ```
 
-### `Easy` ###
+### `CurlEasy` ###
 
 This class implements a wrist and code completion friendly binding over
 the cURL `easy` API, which is the core API for interacting with cURL. It
 is a blocking and single-threaded API.
 
 ```csharp
-using (var stdout = Console.OpenStandardOutput ()) {
-	using (var easy = new Easy {
-		Url = "http://catoverflow.com/api/query",
-		WriteHandler = buffer => stdout.Write (buffer, 0, buffer.Length)
-	}) {
-		easy.Perform ();
-	}
-	stdout.Flush ();
+using (var stdout = Console.OpenStandardOutput())
+{
+    using (var easy = new CurlEasy())
+    {
+        easy.Url = "http://catoverflow.com/api/query";
+        easy.WriteHandler = buffer => stdout.Write(buffer, 0, buffer.Length);
+        easy.Perform();
+    }
+    stdout.Flush();
 }
 ```
 
@@ -74,30 +75,37 @@ using (var stdout = Console.OpenStandardOutput ()) {
 }
 ```
 
-### `Native` ###
+### `CurlNative` ###
 
 This class provides an extremely thin P/Invoke layer over the actual
 libcurl API. Using this API is very much like working with cURL's raw
 C API.
 
 ```csharp
-using (var stdout = Console.OpenStandardOutput ()) {
-	var easy = Native.Easy.Init ();
-	try {
-		Native.Easy.SetOpt (easy, Native.Option.URL, "http://catoverflow.com/api/query");
-		Native.Easy.SetOpt (easy, Native.Option.WRITEFUNCTION, (data, size, nmemb, user) => {
-			var length = (int)size * (int)nmemb;
-			var buffer = new byte [length];
-			System.Runtime.InteropServices.Marshal.Copy (data, buffer, 0, length);
-			stdout.Write (buffer, 0, length);
-			return (IntPtr)length;
-		});
-		Native.Easy.Perform (easy);
-		stdout.Flush ();
-	} finally {
-		if (easy != IntPtr.Zero)
-			Native.Easy.Cleanup (easy);
-	}
+using (var stdout = Console.OpenStandardOutput())
+{
+    var easy = CurlNative.Easy.Init();
+    try
+    {
+        CurlNative.Easy.SetOpt(easy, CURLoption.URL, "http://catoverflow.com/api/query");
+        CurlNative.Easy.SetOpt(easy, CURLoption.WRITEFUNCTION, (data, size, nmemb, user) =>
+        {
+            var length = (int) size * (int) nmemb;
+            var buffer = new byte[length];
+            Marshal.Copy(data, buffer, 0, length);
+            stdout.Write(buffer, 0, length);
+            return (UIntPtr) length;
+        });
+        CurlNative.Easy.Perform(easy);
+        stdout.Flush();
+    }
+    finally
+    {
+        if (easy != IntPtr.Zero)
+        {
+            CurlNative.Easy.Cleanup(easy);
+        }
+    }
 }
 ```
 
