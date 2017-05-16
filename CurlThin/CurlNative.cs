@@ -1,184 +1,125 @@
-//
-// Native.cs
-//
-// Author:
-//   Aaron Bockover <aaron@abock.org>
-//
-// Copyright 2014 Aaron Bockover
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using CurlThin.Enums;
 using CurlThin.SafeHandles;
 
 namespace CurlThin
 {
-	public static class CurlNative
-	{
-	    private const string LIBCURL = "libcurl";
+    /// <remarks>
+    ///     Type mappings (C -> C#):
+    ///     - size_t -> UIntPtr
+    ///     - int    -> int
+    ///     - long   -> int
+    /// </remarks>
+    public static class CurlNative
+    {
+        private const string LIBCURL = "libcurl";
 
-	    [DllImport(LIBCURL, EntryPoint = "curl_global_init")]
-	    public static extern CURLcode Init(CURLglobal flags = CURLglobal.DEFAULT);
+        [DllImport(LIBCURL, EntryPoint = "curl_global_init")]
+        public static extern CURLcode Init(CURLglobal flags = CURLglobal.DEFAULT);
 
-	    [DllImport(LIBCURL, EntryPoint = "curl_global_cleanup")]
-	    public static extern void Cleanup();
+        [DllImport(LIBCURL, EntryPoint = "curl_global_cleanup")]
+        public static extern void Cleanup();
 
         public static class Easy
-		{
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_init")]
-			public static extern SafeEasyHandle Init ();
+        {
+            public delegate UIntPtr DataHandler(IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_cleanup")]
-			public static extern void Cleanup (IntPtr handle);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_init")]
+            public static extern SafeEasyHandle Init();
 
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_perform")]
-			public static extern CURLcode Perform (SafeEasyHandle handle);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_cleanup")]
+            public static extern void Cleanup(IntPtr handle);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
-			public static extern CURLcode SetOpt (SafeEasyHandle handle, CURLoption option, long value);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_perform")]
+            public static extern CURLcode Perform(SafeEasyHandle handle);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
-			public static extern CURLcode SetOpt (SafeEasyHandle handle, CURLoption option, IntPtr value);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_reset")]
+            public static extern void Reset(SafeEasyHandle handle);
 
-		    [DllImport(LIBCURL, EntryPoint = "curl_easy_setopt", CharSet = CharSet.Ansi)]
-            public static extern CURLcode SetOpt (SafeEasyHandle handle, CURLoption option, string value);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_setopt")]
+            public static extern CURLcode SetOpt(SafeEasyHandle handle, CURLoption option, int value);
 
-			public delegate UIntPtr DataHandler (IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_setopt")]
+            public static extern CURLcode SetOpt(SafeEasyHandle handle, CURLoption option, IntPtr value);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_setopt")]
-			public static extern CURLcode SetOpt (SafeEasyHandle handle, CURLoption option, DataHandler value);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_setopt", CharSet = CharSet.Ansi)]
+            public static extern CURLcode SetOpt(SafeEasyHandle handle, CURLoption option, string value);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_getinfo")]
-			public static extern CURLcode GetInfo (SafeEasyHandle handle, CURLINFO option, out int value);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_setopt")]
+            public static extern CURLcode SetOpt(SafeEasyHandle handle, CURLoption option, DataHandler value);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_getinfo")]
-			public static extern CURLcode GetInfo (SafeEasyHandle handle, CURLINFO option, out IntPtr value);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_getinfo")]
+            public static extern CURLcode GetInfo(SafeEasyHandle handle, CURLINFO option, out int value);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_easy_getinfo")]
-			public static extern CURLcode GetInfo (SafeEasyHandle handle, CURLINFO option, out double value);
-		}
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_getinfo")]
+            public static extern CURLcode GetInfo(SafeEasyHandle handle, CURLINFO option, out IntPtr value);
 
-		public static class Multi
-		{
-			[DllImport (LIBCURL, EntryPoint = "curl_multi_init")]
-			public static extern SafeMultiHandle Init ();
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_getinfo")]
+            public static extern CURLcode GetInfo(SafeEasyHandle handle, CURLINFO option, out double value);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_multi_cleanup")]
-			public static extern CURLMcode Cleanup (IntPtr multiHandle);
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_getinfo", CharSet = CharSet.Ansi)]
+            public static extern CURLcode GetInfo(SafeEasyHandle handle, CURLINFO option, IntPtr value);
+        }
 
-			[DllImport (LIBCURL, EntryPoint = "curl_multi_add_handle")]
-			public static extern CURLMcode AddHandle (SafeMultiHandle multiHandle, SafeEasyHandle easyHandle);
+        public static class Multi
+        {
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_init")]
+            public static extern SafeMultiHandle Init();
 
-			[DllImport (LIBCURL, EntryPoint = "curl_multi_remove_handle")]
-			public static extern CURLMcode RemoveHandle (SafeMultiHandle multiHandle, SafeEasyHandle easyHandle);
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_cleanup")]
+            public static extern CURLMcode Cleanup(IntPtr multiHandle);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_multi_perform")]
-			public static extern CURLMcode Perform (SafeMultiHandle multiHandle, ref int runningHandles);
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_add_handle")]
+            public static extern CURLMcode AddHandle(SafeMultiHandle multiHandle, SafeEasyHandle easyHandle);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_multi_fdset")]
-			public static extern CURLMcode FdSet (SafeMultiHandle multiHandle, IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds);
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_remove_handle")]
+            public static extern CURLMcode RemoveHandle(SafeMultiHandle multiHandle, SafeEasyHandle easyHandle);
 
-			[DllImport (LIBCURL, EntryPoint = "curl_multi_timeout")]
-			public static extern CURLMcode Timeout (SafeMultiHandle multiHandle, ref int timeout);
-		}
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_setopt")]
+            public static extern CURLMcode SetOpt(SafeMultiHandle multiHandle, CURLMoption option, int value);
 
-		public class Select : IDisposable
-		{
-		    private const int FD_SETSIZE = 32; // __DARWIN_FD_SETSIZE
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_info_read")]
+            public static extern IntPtr InfoRead(SafeMultiHandle multiHandle, out int msgsInQueue);
 
-		    private struct timeval {
-				public int tv_sec;
-				public int tv_usec;
-			}
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_socket_action")]
+            public static extern CURLMcode SocketAction(SafeMultiHandle multiHandle, SafeSocketHandle sockfd,
+                CURLcselect evBitmask,
+                out int runningHandles);
 
-			[DllImport ("libc")]
-			private static extern int select (int nfds, IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref timeval timeout);
+            [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+            public struct CURLMsg
+            {
+                public CURLMSG msg; /* what this message means */
+                public IntPtr easy_handle; /* the handle it concerns */
+                public CURLMsgData data;
 
-			[DllImport ("libc")]
-			private static extern IntPtr memset (IntPtr b, int c, IntPtr len);
+                [StructLayout(LayoutKind.Explicit)]
+                public struct CURLMsgData
+                {
+                    [FieldOffset(0)] public IntPtr whatever; /* (void*) message-specific data */
+                    [FieldOffset(0)] public CURLcode result; /* return code for transfer */
+                }
+            }
 
-			public delegate bool SetFdsHandler (IntPtr readfds, IntPtr writefds, IntPtr errorfds, ref int maxfds);
+            #region curl_multi_setopt for CURLMOPT_TIMERFUNCTION
 
-		    private IntPtr readfds = Marshal.AllocHGlobal (FD_SETSIZE);
-		    private IntPtr writefds = Marshal.AllocHGlobal (FD_SETSIZE);
-		    private IntPtr errorfds = Marshal.AllocHGlobal (FD_SETSIZE);
+            public delegate int TimerCallback(IntPtr multiHandle, int timeoutMs, IntPtr userp);
 
-			~Select ()
-			{
-				Dispose (false);
-			}
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_setopt")]
+            public static extern CURLMcode SetOpt(SafeMultiHandle multiHandle, CURLMoption option, TimerCallback value);
 
-			public void Dispose ()
-			{
-				Dispose (true);
-				GC.SuppressFinalize (this);
-			}
+            #endregion
 
-			protected virtual void Dispose (bool disposing)
-			{
-				if (readfds != IntPtr.Zero) {
-					Marshal.FreeHGlobal (readfds);
-					readfds = IntPtr.Zero;
-				}
+            #region curl_multi_setopt for CURLMOPT_SOCKETFUNCTION
 
-				if (writefds != IntPtr.Zero) {
-					Marshal.FreeHGlobal (writefds);
-					writefds = IntPtr.Zero;
-				}
+            public delegate int SocketCallback(IntPtr easy, IntPtr s, CURLpoll what, IntPtr userp, IntPtr socketp);
 
-				if (errorfds != IntPtr.Zero) {
-					Marshal.FreeHGlobal (errorfds);
-					errorfds = IntPtr.Zero;
-				}
-			}
+            [DllImport(LIBCURL, EntryPoint = "curl_multi_setopt")]
+            public static extern CURLMcode SetOpt(SafeMultiHandle multiHandle, CURLMoption option,
+                SocketCallback value);
 
-			public bool Perform (Func<TimeSpan> requestedTimeout = null, SetFdsHandler setFds = null)
-			{
-				if (readfds == IntPtr.Zero || writefds == IntPtr.Zero || errorfds == IntPtr.Zero)
-					throw new ObjectDisposedException ("Select");
-
-				int maxfds = -1;
-
-				memset (readfds, 0, (IntPtr)FD_SETSIZE);
-				memset (writefds, 0, (IntPtr)FD_SETSIZE);
-				memset (errorfds, 0, (IntPtr)FD_SETSIZE);
-
-				var timeout = new timeval ();
-
-				if (requestedTimeout != null) {
-					var timespan = requestedTimeout ();
-					if (timespan == TimeSpan.Zero)
-						return true;
-
-					timeout.tv_sec = (int)(timespan.Ticks / TimeSpan.TicksPerSecond);
-					timeout.tv_usec = (int)(timespan.Ticks % TimeSpan.TicksPerSecond / TimeSpan.TicksPerMillisecond);
-				}
-
-				if (setFds != null) {
-					if (!setFds (readfds, writefds, errorfds, ref maxfds))
-						return false;
-				}
-
-				return select (maxfds + 1, readfds, writefds, errorfds, ref timeout) == 0;
-			}
-		}
-	}
+            #endregion
+        }
+    }
 }
