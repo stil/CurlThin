@@ -60,6 +60,9 @@ namespace CurlThin
 
             [DllImport(LIBCURL, EntryPoint = "curl_easy_getinfo", CharSet = CharSet.Ansi)]
             public static extern CURLcode GetInfo(SafeEasyHandle handle, CURLINFO option, IntPtr value);
+
+            [DllImport(LIBCURL, EntryPoint = "curl_easy_strerror")]
+            public static extern IntPtr StrError(CURLcode errornum);
         }
 
         public static class Multi
