@@ -1,5 +1,5 @@
 //
-// Entry.cs
+// CurlException.cs
 //
 // Author:
 //   Aaron Bockover <aaron@abock.org>
@@ -25,29 +25,22 @@
 // THE SOFTWARE.
 
 using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+using CurlThin.Enums;
 
-namespace Curl
+namespace CurlThin
 {
-	static class Entry
+	public class CurlException : Exception
 	{
-		public static void Main (string[] args)
+		public CurlException (string format, params object [] args) : base (string.Format (format, args))
 		{
-			Fetch ().Wait ();
 		}
 
-		static async Task Fetch ()
+		public CurlException (CURLcode code) : base (code.ToString ())
 		{
-			var client = new HttpClient (new CurlHttpClientHandler ());
-			var result = await client.GetAsync ("http://catoverflow.com/api/query");
-			Console.WriteLine ("HTTP {0} {1}", (int)result.StatusCode, result.StatusCode);
-			foreach (var header in result.Headers)
-				Console.WriteLine ("{0}: {1}", header.Key, String.Join ("; ", header.Value));
-			Console.WriteLine ();
-			Console.WriteLine (await result.Content.ReadAsStringAsync ());
+		}
+
+		public CurlException (CURLMcode code) : base (code.ToString ())
+		{
 		}
 	}
 }

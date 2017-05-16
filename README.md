@@ -1,119 +1,274 @@
-# CurlSharp #
+# CurlThin #
+[![Nuget](https://img.shields.io/nuget/v/CurlThin.svg)](https://www.nuget.org/packages/CurlThin/)
 
-_CurlSharp_ is a modern C# (5.0/async) binding against
-[libcurl](http://curl.haxx.se/libcurl) with a
-`System.Net.Http.HttpMessageHandler` implementation for
-use with .NET 4.5's `System.Net.Http.HttpClient`.
+_CurlThin_ is a NET Standard compatible binding library against [libcurl](http://curl.haxx.se/libcurl).
+It includes a modern wrapper for `curl_multi` interface which uses polling with [libuv](https://libuv.org/) library instead of using inefficient `select`.
 
-## Incomplete, Barely Tested, Proof of Concept ##
+_CurlThin_ has a very thin abstraction layer, which means that writing the code is as close as possible to writing purely in libcurl. libcurl has extensive documentation and relatively strong support of community and not having additional abstraction layer makes it easier to search solutions for your problems.
 
-_CurlSharp_ is a brand new project hacked on in spare time (started Jan 7,
-2014). It's sort of an itch scratcher that may prove genuinely useful at
-some point (e.g. to avoid using the default `System.Net.HttpWebRequest`
-backend when using `System.Net.Http.HttpClient`, which has its own set
-of issues).
+Using this library is very much like working with cURL's raw C API.
 
-As such, do not use it in production. You will probably find that much
-is missing. For example, `POST` isn't supported. That's useful.
+## Examples ##
 
-Please do try it out and file issues on Github, however!
+### Easy interface ###
 
-## Classes ##
-
-### `CurlHttpClientHandler` ###
-
-This class derives from `System.Net.Http.HttpMessageHandler` and can be
-used with `System.Net.Http.HttpClient` to provide a cURL-powered HTTP
-experience in .NET. This is the easiest and recommended way to use this
-library.
-
+#### GET request ####
 ```csharp
-var client = new HttpClient (new CurlHttpClientHandler ());
-var cats = client.GetStringAsync ("http://catoverflow.com/api/query").Result;
-Console.WriteLine (cats);
-```
+// curl_global_init() with default flags.
+var global = CurlNative.Init();
 
-### `Easy` ###
+// curl_easy_init() to create easy handle.
+var easy = CurlNative.Easy.Init();
+try
+{
+    CurlNative.Easy.SetOpt(easy, CURLoption.URL, "http://httpbin.org/ip");
 
-This class implements a wrist and code completion friendly binding over
-the cURL `easy` API, which is the core API for interacting with cURL. It
-is a blocking and single-threaded API.
+    var stream = new MemoryStream();
+    CurlNative.Easy.SetOpt(easy, CURLoption.WRITEFUNCTION, (data, size, nmemb, user) =>
+    {
+        var length = (int) size * (int) nmemb;
+        var buffer = new byte[length];
+        Marshal.Copy(data, buffer, 0, length);
+        stream.Write(buffer, 0, length);
+        return (UIntPtr) length;
+    });
 
-```csharp
-using (var stdout = Console.OpenStandardOutput ()) {
-	using (var easy = new Easy {
-		Url = "http://catoverflow.com/api/query",
-		WriteHandler = buffer => stdout.Write (buffer, 0, buffer.Length)
-	}) {
-		easy.Perform ();
-	}
-	stdout.Flush ();
+    var result = CurlNative.Easy.Perform(easy);
+
+    Console.WriteLine($"Result code: {result}.");
+    Console.WriteLine();
+    Console.WriteLine("Response body:");
+    Console.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+}
+finally
+{
+    easy.Dispose();
+
+    if (global == CURLcode.OK)
+    {
+        CurlNative.Cleanup();
+    }
 }
 ```
 
-### `Multi` ###
 
-This class implements a wrist and code completion friendly binding over
-the cURL `multi` API, which provides facilities for non-blocking IO and
-sits atop the cURL `easy` API. It supports `select` operations on `fd_set`
-handles provided by cURL for efficient IO, though using this API is optional.
-
+#### POST request ####
 ```csharp
-using (var stdout = Console.OpenStandardOutput ()) {
-	using (var multi = new Multi {
-		new Easy {
-			Url = "http://catoverflow.com/api/query",
-			WriteHandler = buffer => stdout.Write (buffer, 0, buffer.Length)
-		}
-	}) {
-		do {
-			multi.AutoPerformWithSelect ();
-		} while (multi.HandlesRemaining > 0);
-	}
-	stdout.Flush ();
+// curl_global_init() with default flags.
+var global = CurlNative.Init();
+
+// curl_easy_init() to create easy handle.
+var easy = CurlNative.Easy.Init();
+try
+{
+    var postData = "fieldname1=fieldvalue1&fieldname2=fieldvalue2";
+
+    CurlNative.Easy.SetOpt(easy, CURLoption.URL, "http://httpbin.org/post");
+
+    // This one has to be called before setting COPYPOSTFIELDS.
+    CurlNative.Easy.SetOpt(easy, CURLoption.POSTFIELDSIZE, Encoding.ASCII.GetByteCount(postData));
+    CurlNative.Easy.SetOpt(easy, CURLoption.COPYPOSTFIELDS, postData);
+    
+    var stream = new MemoryStream();
+    CurlNative.Easy.SetOpt(easy, CURLoption.WRITEFUNCTION, (data, size, nmemb, user) =>
+    {
+        var length = (int) size * (int) nmemb;
+        var buffer = new byte[length];
+        Marshal.Copy(data, buffer, 0, length);
+        stream.Write(buffer, 0, length);
+        return (UIntPtr) length;
+    });
+
+    var result = CurlNative.Easy.Perform(easy);
+
+    Console.WriteLine($"Result code: {result}.");
+    Console.WriteLine();
+    Console.WriteLine("Response body:");
+    Console.WriteLine(Encoding.UTF8.GetString(stream.ToArray()));
+}
+finally
+{
+    easy.Dispose();
+
+    if (global == CURLcode.OK)
+    {
+        CurlNative.Cleanup();
+    }
 }
 ```
 
-### `Native` ###
+### Multi interface ###
 
-This class provides an extremely thin P/Invoke layer over the actual
-libcurl API. Using this API is very much like working with cURL's raw
-C API.
-
+#### Web scrape StackOverflow questions ####
 ```csharp
-using (var stdout = Console.OpenStandardOutput ()) {
-	var easy = Native.Easy.Init ();
-	try {
-		Native.Easy.SetOpt (easy, Native.Option.URL, "http://catoverflow.com/api/query");
-		Native.Easy.SetOpt (easy, Native.Option.WRITEFUNCTION, (data, size, nmemb, user) => {
-			var length = (int)size * (int)nmemb;
-			var buffer = new byte [length];
-			System.Runtime.InteropServices.Marshal.Copy (data, buffer, 0, length);
-			stdout.Write (buffer, 0, length);
-			return (IntPtr)length;
-		});
-		Native.Easy.Perform (easy);
-		stdout.Flush ();
-	} finally {
-		if (easy != IntPtr.Zero)
-			Native.Easy.Cleanup (easy);
-	}
+internal class HyperSample : ISample
+{
+    public void Run()
+    {
+        DllLoader.Init();
+        if (CurlNative.Init() != CURLcode.OK)
+        {
+            throw new Exception("Could not init curl");
+        }
+
+        var reqProvider = new MyRequestProvider();
+        var resConsumer = new MyResponseConsumer();
+
+        using (var pipe = new HyperPipe<MyRequestContext>(6, reqProvider, resConsumer))
+        {
+            pipe.RunLoopWait();
+        }
+    }
 }
-```
 
-### `CurlResponseStream` ###
+/// <summary>
+///     What exactly is request context? It can be any type (string, int, custom class, whatever) that will help pass some
+///     data to method that will process response.
+/// </summary>
+public class MyRequestContext : IDisposable
+{
+    public string Label { get; set; }
+    public MemoryStream HeaderStream { get; } = new MemoryStream();
+    public MemoryStream ContentStream { get; } = new MemoryStream();
 
-This class provides the most .NET-familiar wrapper that does not integrate
-into any real framework (e.g. like `CurlHttpClientHandler`). It derives
-from `System.IO.Stream` and takes either a `Curl.Multi` and a `Curl.Easy`
-or just a `Curl.Easy`.
+    public CurlNative.Easy.DataHandler HeaderFunction { get; set; }
+    public CurlNative.Easy.DataHandler ContentFunction { get; set; }
 
-It then consumes these objects to provide a standard .NET read-only stream
-with efficient `select`-based IO. This class is used by `CurlHttpClientHandler`
-to perform the bulk of its work.
+    public void Dispose()
+    {
+        HeaderStream?.Dispose();
+        ContentStream?.Dispose();
+    }
+}
 
-```csharp
-var easy = new Easy { Url = "http://catoverflow.com/api/query" };
-using (var stream = new CurlResponseStream (easy))
-	Console.WriteLine (new StreamReader (stream).ReadToEnd ());
+/// <summary>
+///     Request provider generates requests that you want to send to cURL.
+///     This example shows how to web scrape StackOverflow questions (https://stackoverflow.com/)
+///     beginning with ID 4400000 until ID 4400100.
+/// </summary>
+public class MyRequestProvider : IRequestProvider<MyRequestContext>
+{
+    private readonly int _maxQuestion = 4400100;
+    private int _currentQuestion = 4400000;
+
+    public bool TryNext(SafeEasyHandle easy, out MyRequestContext context)
+    {
+        // If question ID is higher than maximum, return false.
+        if (_currentQuestion > _maxQuestion)
+        {
+            context = null;
+            return false;
+        }
+
+        // Create request context. Assign it a label to easily recognize it later.
+        var contextLocal = new MyRequestContext
+        {
+            Label = $"StackOverflow Question #{_currentQuestion}"
+        };
+
+        // Copy response header (it contains HTTP code and response headers, for example
+        // "Content-Type") to MemoryStream in our RequestContext.
+        context = contextLocal;
+        context.HeaderFunction = (data, size, nmemb, userdata) =>
+        {
+            var length = (int) size * (int) nmemb;
+            var buffer = new byte[length];
+            Marshal.Copy(data, buffer, 0, length);
+            contextLocal.HeaderStream.Write(buffer, 0, length);
+            return (UIntPtr) length;
+        };
+
+        // Copy response body (it for example contains HTML source) to MemoryStream
+        // in our RequestContext.
+        context.ContentFunction = (data, size, nmemb, userdata) =>
+        {
+            var length = (int) size * (int) nmemb;
+            var buffer = new byte[length];
+            Marshal.Copy(data, buffer, 0, length);
+            contextLocal.ContentStream.Write(buffer, 0, length);
+            return (UIntPtr) length;
+        };
+
+        // Set request URL.
+        CurlNative.Easy.SetOpt(easy, CURLoption.URL, $"http://stackoverflow.com/questions/{_currentQuestion}/");
+
+        // Follow redirects.
+        CurlNative.Easy.SetOpt(easy, CURLoption.FOLLOWLOCATION, 1);
+        CurlNative.Easy.SetOpt(easy, CURLoption.HEADERFUNCTION, context.HeaderFunction);
+        CurlNative.Easy.SetOpt(easy, CURLoption.WRITEFUNCTION, context.ContentFunction);
+
+        _currentQuestion++;
+        return true;
+    }
+}
+
+/// <summary>
+///     This class will process HTTP responses.
+/// </summary>
+public class MyResponseConsumer : IResponseConsumer<MyRequestContext>
+{
+    public HandleCompletedAction OnComplete(SafeEasyHandle easy, MyRequestContext context, CURLcode errorCode)
+    {
+        Console.WriteLine($"Request label: {context.Label}.");
+        if (errorCode != CURLcode.OK)
+        {
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.WriteLine($"cURL error code: {errorCode}");
+            var pErrorMsg = CurlNative.Easy.StrError(errorCode);
+            var errorMsg = Marshal.PtrToStringAnsi(pErrorMsg);
+            Console.WriteLine($"cURL error message: {errorMsg}");
+
+            Console.ResetColor();
+            Console.WriteLine("--------");
+            Console.WriteLine();
+
+            context.Dispose();
+            return HandleCompletedAction.ResetHandleAndNext;
+        }
+
+        // Get HTTP response code.
+        CurlNative.Easy.GetInfo(easy, CURLINFO.RESPONSE_CODE, out int httpCode);
+        if (httpCode != 200)
+        {
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.WriteLine($"Invalid HTTP response code: {httpCode}");
+
+            Console.ResetColor();
+            Console.WriteLine("--------");
+            Console.WriteLine();
+
+            context.Dispose();
+            return HandleCompletedAction.ResetHandleAndNext;
+        }
+        Console.WriteLine($"Response code: {httpCode}");
+
+        // Get effective URL.
+        IntPtr pDoneUrl;
+        CurlNative.Easy.GetInfo(easy, CURLINFO.EFFECTIVE_URL, out pDoneUrl);
+        var doneUrl = Marshal.PtrToStringAnsi(pDoneUrl);
+        Console.WriteLine($"Effective URL: {doneUrl}");
+
+        // Get response body as string.
+        string html;
+        context.ContentStream.Seek(0, SeekOrigin.Begin);
+        using (var reader = new StreamReader(context.ContentStream))
+        {
+            html = reader.ReadToEnd();
+        }
+
+        // Scrape question from HTML source.
+        var match = Regex.Match(html, "<title>(.+?)<\\/");
+
+        Console.WriteLine($"Question: {match.Groups[1].Value.Trim()}");
+        Console.WriteLine("--------");
+        Console.WriteLine();
+
+        context.Dispose();
+        return HandleCompletedAction.ResetHandleAndNext;
+    }
+}
 ```
