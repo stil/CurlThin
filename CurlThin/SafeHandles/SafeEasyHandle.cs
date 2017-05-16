@@ -5,7 +5,7 @@ namespace CurlThin.SafeHandles
 {
     public sealed class SafeEasyHandle : SafeHandle
     {
-        private SafeEasyHandle() : base(IntPtr.Zero, true)
+        private SafeEasyHandle() : base(IntPtr.Zero, false)
         {
         }
 
