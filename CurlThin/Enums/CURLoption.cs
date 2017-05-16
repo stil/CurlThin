@@ -1,7 +1,8 @@
-// ReSharper disable InconsistentNaming
+using System.Diagnostics.CodeAnalysis;
 
 namespace CurlThin.Enums
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     internal static class CURLOPTTYPE
     {
         public const uint LONG          = 0;
@@ -10,7 +11,8 @@ namespace CurlThin.Enums
         public const uint FUNCTIONPOINT = 20000;
         public const uint OFF_T         = 30000;
     }
-    
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum CURLoption : uint
     {
         /* This is the FILE * or void * the regular output should be written to. */

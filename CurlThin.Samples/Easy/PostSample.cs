@@ -5,9 +5,9 @@ using System.Text;
 using CurlThin.Enums;
 using CurlThin.Native;
 
-namespace CurlThin.Samples.Native
+namespace CurlThin.Samples.Easy
 {
-    internal class GetSample : ISample
+    internal class PostSample : ISample
     {
         public void Run()
         {
@@ -20,8 +20,14 @@ namespace CurlThin.Samples.Native
             var easy = CurlNative.Easy.Init();
             try
             {
-                CurlNative.Easy.SetOpt(easy, CURLoption.URL, "http://httpbin.org/ip");
+                var postData = "fieldname1=fieldvalue1&fieldname2=fieldvalue2";
 
+                CurlNative.Easy.SetOpt(easy, CURLoption.URL, "http://httpbin.org/post");
+
+                // This one has to be called before setting COPYPOSTFIELDS.
+                CurlNative.Easy.SetOpt(easy, CURLoption.POSTFIELDSIZE, Encoding.ASCII.GetByteCount(postData));
+                CurlNative.Easy.SetOpt(easy, CURLoption.COPYPOSTFIELDS, postData);
+                
                 var stream = new MemoryStream();
                 CurlNative.Easy.SetOpt(easy, CURLoption.WRITEFUNCTION, (data, size, nmemb, user) =>
                 {

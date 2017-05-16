@@ -6,8 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="5.0.0-beta07" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CurlThin.Native\CurlThin.Native.csproj" />
     <ProjectReference Include="..\CurlThin\CurlThin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

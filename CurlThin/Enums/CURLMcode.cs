@@ -1,7 +1,8 @@
-﻿// ReSharper disable InconsistentNaming
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace CurlThin.Enums
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum CURLMcode
     {
         /// <summary>
