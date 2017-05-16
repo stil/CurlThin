@@ -1,15 +1,15 @@
 ﻿using System;
-
-// ReSharper disable InconsistentNaming
+using System.Diagnostics.CodeAnalysis;
 
 namespace CurlThin.Enums
 {
     /// <summary>
     ///     Contains values used to initialize libcurl internally. One of
-    ///     these is passed in the call to <see cref="Native.Init" />.
+    ///     these is passed in the call to <see cref="CurlNative.Init" />.
     /// </summary>
     [Flags]
-    public enum CURLglobal : long
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public enum CURLglobal
     {
         /// <summary>
         ///     Initialise nothing extra. This sets no bit.

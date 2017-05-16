@@ -1,11 +1,11 @@
-// ReSharper disable InconsistentNaming
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CurlThin.Enums
 {
     [Flags]
-	public enum CURLPROTO
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public enum CURLPROTO
     {
         HTTP   = 1<<0,
         HTTPS  = 1<<1,

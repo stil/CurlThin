@@ -1,10 +1,10 @@
 ﻿using System;
-
-// ReSharper disable InconsistentNaming
+using System.Diagnostics.CodeAnalysis;
 
 namespace CurlThin.Enums
 {
     [Flags]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum CURLcselect
     {
         IN = 0x01,

@@ -1,7 +1,8 @@
-﻿// ReSharper disable InconsistentNaming
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace CurlThin.Enums
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     internal static class CURLINFOTYPE
     {
         public const uint STRING   = 0x100000;
@@ -13,6 +14,7 @@ namespace CurlThin.Enums
         public const uint TYPEMASK = 0xf00000;
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum CURLINFO : uint
     {
         NONE, // First, never use this.
