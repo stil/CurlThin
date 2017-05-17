@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>net47;netstandard1.4</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>Thin libcurl wrapper for C#. Keeps original enum naming, so you can easily switch if you already know libcurl. Provides convenient access to concurrent curl_multi interface with polling.</Description>
+    <PackageProjectUrl>https://github.com/stil/CurlThin</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/stil/CurlThin</RepositoryUrl>
+    <PackageTags>curl libcurl http</PackageTags>
+    <PackageIconUrl>https://raw.githubusercontent.com/stil/CurlThin/meta/CurlThin/NuGet.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
