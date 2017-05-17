@@ -11,6 +11,9 @@ _CurlThin_ has a very thin abstraction layer, which means that writing the code 
 
 Using this library is very much like working with cURL's raw C API.
 
+### License ###
+Library is MIT licensed. NuGet icon made by made by [Freepik](http://www.freepik.com) and is licensed by [CC 3.0 BY](https://creativecommons.org/licenses/by/3.0/)
+
 ## Examples ##
 
 ### Easy interface ###
