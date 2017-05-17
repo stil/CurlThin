@@ -11,7 +11,7 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <TargetFrameworks>net47;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks>net462;netstandard1.6</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
