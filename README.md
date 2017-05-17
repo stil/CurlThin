@@ -1,5 +1,8 @@
 # CurlThin #
 [![Nuget](https://img.shields.io/nuget/v/CurlThin.svg)](https://www.nuget.org/packages/CurlThin/)
+![Downloads](https://img.shields.io/nuget/dt/CurlThin.svg)
+[![Gitter](https://img.shields.io/gitter/room/CurlThin/Lobby.svg)](https://gitter.im/CurlThin/Lobby)
+
 
 _CurlThin_ is a NET Standard compatible binding library against [libcurl](http://curl.haxx.se/libcurl).
 It includes a modern wrapper for `curl_multi` interface which uses polling with [libuv](https://libuv.org/) library instead of using inefficient `select`.
@@ -7,6 +10,9 @@ It includes a modern wrapper for `curl_multi` interface which uses polling with 
 _CurlThin_ has a very thin abstraction layer, which means that writing the code is as close as possible to writing purely in libcurl. libcurl has extensive documentation and relatively strong support of community and not having additional abstraction layer makes it easier to search solutions for your problems.
 
 Using this library is very much like working with cURL's raw C API.
+
+### License ###
+Library is MIT licensed. NuGet icon made by made by [Freepik](http://www.freepik.com) and is licensed by [CC 3.0 BY](https://creativecommons.org/licenses/by/3.0/)
 
 ## Examples ##
 
