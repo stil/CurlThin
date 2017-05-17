@@ -1,5 +1,8 @@
 # CurlThin #
 [![Nuget](https://img.shields.io/nuget/v/CurlThin.svg)](https://www.nuget.org/packages/CurlThin/)
+![Downloads](https://img.shields.io/nuget/dt/CurlThin.svg)
+[![Gitter](https://img.shields.io/gitter/room/CurlThin/Lobby.svg)](https://gitter.im/CurlThin/Lobby)
+
 
 _CurlThin_ is a NET Standard compatible binding library against [libcurl](http://curl.haxx.se/libcurl).
 It includes a modern wrapper for `curl_multi` interface which uses polling with [libuv](https://libuv.org/) library instead of using inefficient `select`.
