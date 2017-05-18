@@ -9,9 +9,14 @@
     </Description>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <None Remove="NuGet.png" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard1.6</TargetFrameworks>
+    <PackageIconUrl>https://raw.githubusercontent.com/stil/CurlThin/master/CurlThin.Native/NuGet.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
