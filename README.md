@@ -1,6 +1,4 @@
 # CurlThin #
-[![Nuget](https://img.shields.io/nuget/v/CurlThin.svg)](https://www.nuget.org/packages/CurlThin/)
-![Downloads](https://img.shields.io/nuget/dt/CurlThin.svg)
 [![Gitter](https://img.shields.io/gitter/room/CurlThin/Lobby.svg)](https://gitter.im/CurlThin/Lobby)
 
 
@@ -12,7 +10,17 @@ _CurlThin_ has a very thin abstraction layer, which means that writing the code 
 Using this library is very much like working with cURL's raw C API.
 
 ### License ###
-Library is MIT licensed. NuGet icon made by made by [Freepik](http://www.freepik.com) and is licensed by [CC 3.0 BY](https://creativecommons.org/licenses/by/3.0/)
+Library is MIT licensed. NuGet icon made by [Freepik](http://www.freepik.com) and is licensed by [CC 3.0 BY](https://creativecommons.org/licenses/by/3.0/)
+
+## Installation ##
+
+| Package   | NuGet        | Description  |
+|-----------|--------------|---|
+| `CurlThin` | [![Nuget](https://img.shields.io/nuget/v/CurlThin.svg)](https://www.nuget.org/packages/CurlThin/) ![Downloads](https://img.shields.io/nuget/dt/CurlThin.svg) | The C# wrapper for libcurl.  |
+| `CurlThin.Native` | [![Nuget](https://img.shields.io/nuget/v/CurlThin.Native.svg)](https://www.nuget.org/packages/CurlThin.Native/) ![Downloads](https://img.shields.io/nuget/dt/CurlThin.Native.svg) | Contains embedded libcurl native binaries for x86 and x64 Windows. |
+
+If you have `libcurl` or `libcurl.dll` already in your PATH directory, you don't need to install `CurlThin.Native` package.
+
 
 ## Examples ##
 
