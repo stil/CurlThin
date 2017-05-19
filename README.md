@@ -19,8 +19,20 @@ Library is MIT licensed. NuGet icon made by [Freepik](http://www.freepik.com) an
 | `CurlThin` | [![Nuget](https://img.shields.io/nuget/v/CurlThin.svg)](https://www.nuget.org/packages/CurlThin/) ![Downloads](https://img.shields.io/nuget/dt/CurlThin.svg) | The C# wrapper for libcurl.  |
 | `CurlThin.Native` | [![Nuget](https://img.shields.io/nuget/v/CurlThin.Native.svg)](https://www.nuget.org/packages/CurlThin.Native/) ![Downloads](https://img.shields.io/nuget/dt/CurlThin.Native.svg) | Contains embedded libcurl native binaries for x86 and x64 Windows. |
 
-If you have `libcurl` or `libcurl.dll` already in your PATH directory, you don't need to install `CurlThin.Native` package.
+If you have `libcurl` or `libcurl.dll` already in your PATH directory, you don't need to install `CurlThin.Native` package. Once you have installed `CurlThin.Native` NuGet package, call following method just once before you use cURL:
 
+```csharp
+CurlResources.Init();
+```
+
+It will extract following files to your application output directory
+
+| Windows x86 | Windows x64 | Description |
+|-------------|-------------|-------------|
+| libcurl.dll | libcurl.dll | The multiprotocol file transfer library. |
+| libssl-1_1.dll | libssl-1_1-x64.dll | Portion of OpenSSL which supports TLS ( SSL and TLS Protocols), and depends on libcrypto. |
+| libcrypto-1_1.dll | libcrypto-1_1-x64.dll | Provides the fundamental cryptographic routines used by libssl. |
+| curl-ca-bundle.crt | curl-ca-bundle.crt | Certificate Authority (CA) bundle. You can use it via [`CURLOPT_CAINFO`](https://curl.haxx.se/libcurl/c/CURLOPT_CAINFO.html). |
 
 ## Examples ##
 
