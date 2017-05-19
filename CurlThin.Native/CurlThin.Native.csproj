@@ -1,21 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="NuGet">
-    <PackageId>CurlThin.Native</PackageId>
-    <Version>7.54.0.0</Version>
-    <Title>libcurl native binaries</Title>
-    <Description>Contains 32bit and 64bit binary of libcurl for Windows.</Description>
+    <Version>0.0.1</Version>
+    <Title>libcurl native binaries x86 x64</Title>
+    <Description>Contains x86 and x64 native libcurl binaries for Windows. Current libcurl version: 7.54.0 released on the 19th of April 2017.</Description>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageIconUrl>https://raw.githubusercontent.com/stil/CurlThin/master/CurlThin.Native/NuGet.png</PackageIconUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.5</TargetFramework>
   </PropertyGroup>
   
   <ItemGroup>
     <None Remove="NuGet.png" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
-    <PackageIconUrl>https://raw.githubusercontent.com/stil/CurlThin/master/CurlThin.Native/NuGet.png</PackageIconUrl>
-  </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\**" />
