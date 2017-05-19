@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CurlThin.Native;
 
 namespace CurlThin.Samples
 {
@@ -9,6 +10,8 @@ namespace CurlThin.Samples
     {
         private static void Main(string[] args)
         {
+            CurlResources.Init();
+
             var samples = FindSamples<ISample>();
 
             Console.WriteLine("Available samples:");

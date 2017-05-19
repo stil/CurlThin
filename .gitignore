@@ -293,5 +293,4 @@ __pycache__/
 
 # End of https://www.gitignore.io/api/visualstudio
 
-CurlThin.Native/win32/
-CurlThin.Native/win64/
+CurlThin.Native/Resources*

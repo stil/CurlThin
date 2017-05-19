@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using CurlThin.Enums;
 using CurlThin.HyperPipe;
-using CurlThin.Native;
 using CurlThin.SafeHandles;
 
 namespace CurlThin.Samples.Multi
@@ -13,7 +12,6 @@ namespace CurlThin.Samples.Multi
     {
         public void Run()
         {
-            DllLoader.Init();
             if (CurlNative.Init() != CURLcode.OK)
             {
                 throw new Exception("Could not init curl");

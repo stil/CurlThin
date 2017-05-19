@@ -3,7 +3,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using CurlThin.Enums;
-using CurlThin.Native;
 
 namespace CurlThin.Samples.Easy
 {
@@ -11,11 +10,9 @@ namespace CurlThin.Samples.Easy
     {
         public void Run()
         {
-            DllLoader.Init();
-
             // curl_global_init() with default flags.
             var global = CurlNative.Init();
-            
+
             // curl_easy_init() to create easy handle.
             var easy = CurlNative.Easy.Init();
             try
