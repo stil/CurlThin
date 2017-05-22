@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using CurlThin.Enums;
 using CurlThin.SafeHandles;
 using NetUV.Core.Handles;
@@ -216,23 +217,28 @@ namespace CurlThin.HyperPipe
                 return; // All handles are in use.
             }
 
-            _loop.CreateWorkRequest(work =>
+            var asyncHandle = _loop.CreateAsync(async =>
+            {
+                var result = ((bool HasNext, T Next)) async.UserToken;
+                if (result.HasNext)
                 {
-                    _oneRequestPullAtOnce.Wait();
-                    var result = _requestProvider.MoveNextAsync(easy).Result;
-                    work.UserToken = (result, _requestProvider.Current);
-                    _oneRequestPullAtOnce.Release();
-                },
-                work =>
-                {
-                    var result = ((bool HasNext, T Next)) work.UserToken;
-                    if (result.HasNext)
-                    {
-                        _easyPool.AssignContext(easy, result.Next);
-                        CurlNative.Multi.AddHandle(_multiHandle, easy);
-                        Refill();
-                    }
-                });
+                    _easyPool.AssignContext(easy, result.Next);
+                    CurlNative.Multi.AddHandle(_multiHandle, easy);
+                    Refill();
+                }
+
+                async.CloseHandle();
+                async.Dispose();
+            });
+
+            Task.Run(async () =>
+            {
+                await _oneRequestPullAtOnce.WaitAsync();
+                var result = await _requestProvider.MoveNextAsync(easy);
+                asyncHandle.UserToken = (result, _requestProvider.Current);
+                _oneRequestPullAtOnce.Release();
+                asyncHandle.Send();
+            });
         }
     }
 }
