@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using CurlThin.Enums;
 using CurlThin.SafeHandles;
 using NetUV.Core.Handles;
 using NLog;
+using Timer = NetUV.Core.Handles.Timer;
 
 namespace CurlThin.HyperPipe
 {
-    public class HyperPipe<T> : IDisposable where T : class
+    public class HyperPipe<T> : IDisposable
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly EasyPool<T> _easyPool;
         private readonly Loop _loop;
         private readonly SafeMultiHandle _multiHandle;
+        private readonly SemaphoreSlim _oneRequestPullAtOnce = new SemaphoreSlim(1);
         private readonly IRequestProvider<T> _requestProvider;
         private readonly IResponseConsumer<T> _responseConsumer;
         private readonly CurlNative.Multi.SocketCallback _socketCallback;
@@ -52,11 +55,10 @@ namespace CurlThin.HyperPipe
         public void Dispose()
         {
             _multiHandle.Dispose();
-            _loop?.Dispose();
-            _timeout?.Dispose();
+            _loop.Dispose();
+            _timeout.Dispose();
             _socketMap.Dispose();
-            GC.KeepAlive(_socketCallback);
-            GC.KeepAlive(_timerCallback);
+            _oneRequestPullAtOnce.Dispose();
         }
 
         public void RunLoopWait()
@@ -151,7 +153,7 @@ namespace CurlThin.HyperPipe
             {
                 Logger.Trace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs}. "
                              + "We should call curl_multi_socket_action or curl_multi_perform (once) as soon as possible.");
-                
+
                 CurlNative.Multi.SocketAction(_multiHandle, SafeSocketHandle.Invalid, 0, out int _);
                 CheckMultiInfo();
             }
@@ -180,7 +182,7 @@ namespace CurlThin.HyperPipe
                     throw new Exception($"Unexpected curl_multi_info_read result message: {message.msg}.");
                 }
 
-                var context = _easyPool[message.easy_handle];
+                var easy = _easyPool.GetSafeHandleFromPtr(message.easy_handle);
 
                 /* Do not use message data after calling curl_multi_remove_handle() and
                            curl_easy_cleanup(). As per curl_multi_info_read() docs:
@@ -188,22 +190,20 @@ namespace CurlThin.HyperPipe
                            calling curl_multi_cleanup, curl_multi_remove_handle or
                            curl_easy_cleanup." */
 
-                var action = _responseConsumer.OnComplete(context.Easy, context.CurrentRequest, message.data.result);
+                _easyPool.GetAssignedContext(easy, out T requestContext);
+                var action = _responseConsumer.OnComplete(easy, requestContext, message.data.result);
 
                 if (action == HandleCompletedAction.ReuseHandleAndRetry)
                 {
-                    CurlNative.Multi.RemoveHandle(_multiHandle, context.Easy);
-                    CurlNative.Multi.AddHandle(_multiHandle, context.Easy);
+                    CurlNative.Multi.RemoveHandle(_multiHandle, easy);
+                    CurlNative.Multi.AddHandle(_multiHandle, easy);
                 }
                 else if (action == HandleCompletedAction.ResetHandleAndNext)
                 {
-                    CurlNative.Multi.RemoveHandle(_multiHandle, context.Easy);
-                    CurlNative.Easy.Reset(context.Easy);
-                    
-                    GC.KeepAlive(context.CurrentRequest);
-                    context.IsUsed = false;
-                    context.CurrentRequest = null;
-                    
+                    CurlNative.Multi.RemoveHandle(_multiHandle, easy);
+                    CurlNative.Easy.Reset(easy);
+                    _easyPool.UnassignContext(easy);
+                    _easyPool.Free(easy);
                     Refill();
                 }
             }
@@ -211,19 +211,28 @@ namespace CurlThin.HyperPipe
 
         private void Refill()
         {
-            foreach (var context in _easyPool.NotInUse)
+            if (!_easyPool.TryTakeFree(out SafeEasyHandle easy))
             {
-                if (_requestProvider.TryNext(context.Easy, out T requestContext))
-                {
-                    context.CurrentRequest = requestContext;
-                    context.IsUsed = true;
-                    CurlNative.Multi.AddHandle(_multiHandle, context.Easy);
-                }
-                else
-                {
-                    break;
-                }
+                return; // All handles are in use.
             }
+
+            _loop.CreateWorkRequest(work =>
+                {
+                    _oneRequestPullAtOnce.Wait();
+                    var result = _requestProvider.MoveNextAsync(easy).Result;
+                    work.UserToken = (result, _requestProvider.Current);
+                    _oneRequestPullAtOnce.Release();
+                },
+                work =>
+                {
+                    var result = ((bool HasNext, T Next)) work.UserToken;
+                    if (result.HasNext)
+                    {
+                        _easyPool.AssignContext(easy, result.Next);
+                        CurlNative.Multi.AddHandle(_multiHandle, easy);
+                        Refill();
+                    }
+                });
         }
     }
 }

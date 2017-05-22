@@ -40,6 +40,7 @@ namespace CurlThin.Native
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
+                SetDllDirectory(AssemblyDirectory);
                 switch (RuntimeInformation.OSArchitecture)
                 {
                     case Architecture.X64:
@@ -76,5 +77,9 @@ namespace CurlThin.Native
                 }
             }
         }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool SetDllDirectory(string lpPathName);
     }
 }
