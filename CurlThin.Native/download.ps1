@@ -1,10 +1,13 @@
-function DownloadBintray
+# <FUNCTIONS>
+function DownloadBintray( $OutDir = '.' )
 {
+    $packageName = $args[0];
     $prefix = "https://bintray.com/vszakats/generic/download_file?file_path="
-    $withExt = $args[0]+".7z"
-    Invoke-WebRequest $prefix$withExt -OutFile $withExt
-    7z.exe x $withExt
-    Remove-Item $withExt
+    $archiveName = $packageName + ".7z"
+
+    Invoke-WebRequest $prefix$archiveName -OutFile $OutDir\$archiveName
+    7z.exe x $OutDir\$archiveName "-o$OutDir"
+    Remove-Item $OutDir\$archiveName
 }
 
 function ZipFiles( $zipfilename, $sourcedir )
@@ -14,20 +17,29 @@ function ZipFiles( $zipfilename, $sourcedir )
    [System.IO.Compression.ZipFile]::CreateFromDirectory($sourcedir,
         $zipfilename, $compressionLevel, $false)
 }
+# </FUNCTIONS>
 
-md -Force "Resources"
-cd "Resources"
+# <VARIABLES>
+$downloadDir = "$PSScriptRoot/Download"
+$resourcesDir = "$PSScriptRoot/Resources"
+$curlVersion = "7.54.0"
+$opensslVersion = "1.1.0e"
+# </VARIABLES>
+
+# <SCRIPT>
+md -Force $downloadDir
+md -Force $resourcesDir
 
 foreach ($arch in @("win32","win64")) {
-    md $arch
+    md -Force $resourcesDir\$arch
 
-    DownloadBintray "curl-7.54.0-$arch-mingw"
-    cp "curl-7.54.0-$arch-mingw\bin\*.dll" $arch
-    cp "curl-7.54.0-$arch-mingw\bin\*.crt" "."
+    DownloadBintray "curl-$curlVersion-$arch-mingw" -OutDir $downloadDir
+    cp "$downloadDir\curl-$curlVersion-$arch-mingw\bin\*.dll" $resourcesDir\$arch
+    cp "$downloadDir\curl-$curlVersion-$arch-mingw\bin\*.crt" $resourcesDir
 
-    DownloadBintray "openssl-1.1.0e-$arch-mingw"
-    cp "openssl-1.1.0e-$arch-mingw\*.dll" $arch
+    DownloadBintray "openssl-$opensslVersion-$arch-mingw" -OutDir $downloadDir
+    cp "$downloadDir\openssl-$opensslVersion-$arch-mingw\*.dll" $resourcesDir\$arch
 }
 
-cd ..
-ZipFiles -sourcedir "Resources" -zipfilename "Resources.zip"
+ZipFiles -sourcedir $resourcesDir -zipfilename "$resourcesDir.zip"
+# </SCRIPT>
