@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CurlThin.Enums;
 using CurlThin.HyperPipe;
+using CurlThin.Native;
 using CurlThin.SafeHandles;
 
 namespace CurlThin.Samples.Multi
@@ -106,7 +107,7 @@ namespace CurlThin.Samples.Multi
             var context = new MyRequestContext($"StackOverflow Question #{_currentQuestion}");
 
             // Set request URL.
-            CurlNative.Easy.SetOpt(easy, CURLoption.URL, $"http://stackoverflow.com/questions/{_currentQuestion}/");
+            CurlNative.Easy.SetOpt(easy, CURLoption.URL, $"https://stackoverflow.com/questions/{_currentQuestion}/");
 
             // Follow redirects.
             CurlNative.Easy.SetOpt(easy, CURLoption.FOLLOWLOCATION, 1);
@@ -121,6 +122,9 @@ namespace CurlThin.Samples.Multi
             // Copy response body (it for example contains HTML source) to MemoryStream
             // in our RequestContext.
             CurlNative.Easy.SetOpt(easy, CURLoption.WRITEFUNCTION, context.ContentData.DataHandler);
+
+            // Point the certificate bundle file path to verify HTTPS certificates.
+            CurlNative.Easy.SetOpt(easy, CURLoption.CAINFO, CurlResources.CaBundlePath);
 
             _currentQuestion++;
             Current = context;

@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="NuGet">
-    <Version>0.0.2</Version>
     <Description>Contains x86 and x64 native libcurl binaries for Windows. Current libcurl version: 7.54.0 released on the 19th of April 2017.</Description>
     <PackageTags>libcurl native binaries x86 x64</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/stil/CurlThin/master/CurlThin.Native/NuGet.png</PackageIconUrl>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup>
