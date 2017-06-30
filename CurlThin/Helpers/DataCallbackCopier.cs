@@ -26,6 +26,12 @@ namespace CurlThin.Helpers
         {
             Stream?.Dispose();
         }
+        
+        public void Reset()
+        {
+            Stream.Position = 0;
+            Stream.SetLength(0);
+        }
 
         public string ReadAsString()
         {
