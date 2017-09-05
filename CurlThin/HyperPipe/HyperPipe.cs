@@ -4,15 +4,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using CurlThin.Enums;
 using CurlThin.SafeHandles;
+using Microsoft.Extensions.Logging;
 using NetUV.Core.Handles;
-using NLog;
 using Timer = NetUV.Core.Handles.Timer;
 
 namespace CurlThin.HyperPipe
 {
     public class HyperPipe<T> : IDisposable
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Logging.GetCurrentClassLogger();
 
         private readonly EasyPool<T> _easyPool;
         private readonly Loop _loop;
@@ -47,9 +47,9 @@ namespace CurlThin.HyperPipe
             _socketCallback = HandleSocket;
             _timerCallback = StartTimeout;
 
-            Logger.Debug($"Set {CURLMoption.SOCKETFUNCTION}.");
+            Logger.LogDebug($"Set {CURLMoption.SOCKETFUNCTION}.");
             CurlNative.Multi.SetOpt(_multiHandle, CURLMoption.SOCKETFUNCTION, _socketCallback);
-            Logger.Debug($"Set {CURLMoption.TIMERFUNCTION}.");
+            Logger.LogDebug($"Set {CURLMoption.TIMERFUNCTION}.");
             CurlNative.Multi.SetOpt(_multiHandle, CURLMoption.TIMERFUNCTION, _timerCallback);
         }
 
@@ -67,10 +67,10 @@ namespace CurlThin.HyperPipe
             Refill();
 
             // Kickstart.
-            Logger.Debug("Kickstarting...");
+            Logger.LogDebug("Kickstarting...");
             CurlNative.Multi.SocketAction(_multiHandle, SafeSocketHandle.Invalid, 0, out int _);
 
-            Logger.Debug("Starting libuv loop...");
+            Logger.LogDebug("Starting libuv loop...");
             _loop.RunDefault();
         }
 
@@ -85,7 +85,7 @@ namespace CurlThin.HyperPipe
         /// <returns></returns>
         private int HandleSocket(IntPtr easy, IntPtr sockfd, CURLpoll what, IntPtr userp, IntPtr socketp)
         {
-            Logger.Trace(
+            Logger.LogTrace(
                 $"Called {nameof(CURLMoption.SOCKETFUNCTION)}. We need to poll for {what} on socket {sockfd}.");
 
             switch (what)
@@ -104,7 +104,7 @@ namespace CurlThin.HyperPipe
                         events |= PollMask.Readable;
                     }
 
-                    Logger.Trace($"Polling socket {sockfd} using libuv with mask {events}.");
+                    Logger.LogTrace($"Polling socket {sockfd} using libuv with mask {events}.");
 
                     _socketMap.GetOrCreatePoll(sockfd, _loop).Start(events, (poll, status) =>
                     {
@@ -119,13 +119,13 @@ namespace CurlThin.HyperPipe
                             flags |= CURLcselect.OUT;
                         }
 
-                        Logger.Trace($"Finished polling socket {sockfd}.");
+                        Logger.LogTrace($"Finished polling socket {sockfd}.");
                         CurlNative.Multi.SocketAction(_multiHandle, sockfd, flags, out int _);
                         CheckMultiInfo();
                     });
                     break;
                 case CURLpoll.REMOVE:
-                    Logger.Trace($"Removing poll of socket {sockfd}.");
+                    Logger.LogTrace($"Removing poll of socket {sockfd}.");
                     _socketMap.RemovePoll(sockfd);
                     break;
                 default:
@@ -146,13 +146,13 @@ namespace CurlThin.HyperPipe
         {
             if (timeoutMs < 0)
             {
-                Logger.Trace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs}. "
+                Logger.LogTrace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs}. "
                              + "Deleting our timer.");
                 _timeout.Stop();
             }
             else if (timeoutMs == 0)
             {
-                Logger.Trace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs}. "
+                Logger.LogTrace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs}. "
                              + "We should call curl_multi_socket_action or curl_multi_perform (once) as soon as possible.");
 
                 CurlNative.Multi.SocketAction(_multiHandle, SafeSocketHandle.Invalid, 0, out int _);
@@ -160,7 +160,7 @@ namespace CurlThin.HyperPipe
             }
             else
             {
-                Logger.Trace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs} ms.");
+                Logger.LogTrace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs} ms.");
 
                 _timeout.Start(t =>
                 {
