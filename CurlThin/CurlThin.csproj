@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Thin libcurl wrapper for C#. Keeps original enum naming, so you can easily switch if you already know libcurl. Provides convenient access to concurrent curl_multi interface with polling.</Description>
     <PackageProjectUrl>https://github.com/stil/CurlThin</PackageProjectUrl>
     <RepositoryUrl>https://github.com/stil/CurlThin</RepositoryUrl>
@@ -14,11 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetUV.Core" Version="0.1.112" />
-    <PackageReference Include="NLog" Version="5.0.0-beta09" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.3.1" />
+    <PackageReference Include="NetUV.Core" Version="0.1.125" />
+    <PackageReference Include="NLog" Version="5.0.0-beta10" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.4.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
 </Project>
