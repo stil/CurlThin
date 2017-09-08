@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\**" />
+    <None Remove="build/**" />
     <EmbeddedResource Include="Resources.zip" />
   </ItemGroup>
 
