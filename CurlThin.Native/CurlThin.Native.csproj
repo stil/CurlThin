@@ -19,7 +19,4 @@
     <EmbeddedResource Include="Resources.zip" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
-  </ItemGroup>
 </Project>

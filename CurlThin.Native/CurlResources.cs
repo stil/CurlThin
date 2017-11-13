@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
@@ -39,15 +40,7 @@ namespace CurlThin.Native
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 SetDllDirectory(OutputDir.FullName);
-                switch (RuntimeInformation.OSArchitecture)
-                {
-                    case Architecture.X64:
-                        ExtractResource("win64/*.dll", OutputDir);
-                        break;
-                    case Architecture.X86:
-                        ExtractResource("win32/*.dll", OutputDir);
-                        break;
-                }
+                ExtractResource(Environment.Is64BitProcess ? "win64/*.dll" : "win32/*.dll", OutputDir);
             }
         }
 
