@@ -108,6 +108,11 @@ def main():
         cp(os.path.join(download_dir, cur_pkg, 'bin', '*.dll'), cur_res_dir)
         cp(os.path.join(download_dir, cur_pkg, 'bin', '*.crt'), cur_res_dir)
 
+        if arch == 'win64':
+            libcurlx64 = os.path.join(cur_res_dir, 'libcurl-x64.dll')
+            if os.path.isfile(libcurlx64):
+                os.rename(libcurlx64, os.path.join(cur_res_dir, 'libcurl.dll'))
+
         cur_pkg = f'openssl-{args.openssl_version}-{arch}-mingw'
         download_bintray(cur_pkg, download_dir, exe_7z)
         cp(os.path.join(download_dir, cur_pkg, '*.dll'), cur_res_dir)
