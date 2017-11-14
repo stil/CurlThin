@@ -2,6 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CurlThin.Enums
 {
+    /// <summary>
+    ///     Reference: https://github.com/curl/curl/blob/master/include/curl/multi.h
+    /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum CURLMoption : uint
     {

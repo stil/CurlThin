@@ -3,6 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CurlThin.Enums
 {
+    /// <summary>
+    ///     Reference: https://github.com/curl/curl/blob/master/include/curl/curl.h
+    /// </summary>
     [Flags]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum CURLPROTO
@@ -40,6 +43,5 @@ namespace CurlThin.Enums
         ///     Enable everything.
         /// </summary>
         ALL    = ~0
-            
 	}
 }
