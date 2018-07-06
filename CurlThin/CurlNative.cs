@@ -124,5 +124,14 @@ namespace CurlThin
 
             #endregion
         }
+
+        public static class Slist
+        {
+            [DllImport(LIBCURL, EntryPoint = "curl_slist_append")]
+            public static extern SafeSlistHandle Append(SafeSlistHandle slist, string data);
+            
+            [DllImport(LIBCURL, EntryPoint = "curl_slist_free_all")]
+            public static extern void FreeAll(SafeSlistHandle pList);
+        }
     }
 }
