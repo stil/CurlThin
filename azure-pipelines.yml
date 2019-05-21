@@ -15,6 +15,18 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+    architecture: 'x64'
+
+- task: PythonScript@0
+  inputs:
+    scriptSource: 'filePath'
+    scriptPath: 'CurlThin.Native/pack_curl_native.py'
+    arguments: '--libcurl-version=$(LIBCURL_VER) --openssl-version=$(OPENSSL_VER) --clean'
+
 - task: NuGetToolInstaller@0
 
 - task: NuGetCommand@2
