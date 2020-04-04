@@ -1,22 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="NuGet">
-    <Description>Contains x86 and x64 native libcurl binaries for Windows. Current libcurl version: 7.57.0 released on the 29th of November 2017.</Description>
+    <Description>Contains x86 and x64 native libcurl binaries for Windows. Current libcurl version: 7.69.1 released on the 11th of March 2020.</Description>
     <PackageTags>libcurl native binaries x86 x64</PackageTags>
-    <PackageIconUrl>https://raw.githubusercontent.com/stil/CurlThin/master/CurlThin.Native/NuGet.png</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <None Remove="NuGet.png" />
+    <EmbeddedResource Include="Resources.zip" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="build/**" />
-    <EmbeddedResource Include="Resources.zip" />
+    <None Include="NuGet\icon.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 
 </Project>
