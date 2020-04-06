@@ -6,11 +6,11 @@
     <PackageProjectUrl>https://github.com/stil/CurlThin</PackageProjectUrl>
     <RepositoryUrl>https://github.com/stil/CurlThin</RepositoryUrl>
     <PackageTags>curl libcurl http</PackageTags>
-    <PackageIconUrl>https://raw.githubusercontent.com/stil/CurlThin/master/CurlThin/NuGet.png</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="NuGet.png" />
+    <None Include="NuGet\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
