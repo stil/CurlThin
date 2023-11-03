@@ -47,9 +47,9 @@ namespace CurlThin.HyperPipe
             _socketCallback = HandleSocket;
             _timerCallback = StartTimeout;
 
-            Logger.LogDebug($"Set {CURLMoption.SOCKETFUNCTION}.");
+            Logger.LogDebug("Set {Socketfunction}.", CURLMoption.SOCKETFUNCTION);
             CurlNative.Multi.SetOpt(_multiHandle, CURLMoption.SOCKETFUNCTION, _socketCallback);
-            Logger.LogDebug($"Set {CURLMoption.TIMERFUNCTION}.");
+            Logger.LogDebug("Set {Timerfunction}.", CURLMoption.TIMERFUNCTION);
             CurlNative.Multi.SetOpt(_multiHandle, CURLMoption.TIMERFUNCTION, _timerCallback);
         }
 
@@ -85,8 +85,8 @@ namespace CurlThin.HyperPipe
         /// <returns></returns>
         private int HandleSocket(IntPtr easy, IntPtr sockfd, CURLpoll what, IntPtr userp, IntPtr socketp)
         {
-            Logger.LogTrace(
-                $"Called {nameof(CURLMoption.SOCKETFUNCTION)}. We need to poll for {what} on socket {sockfd}.");
+            Logger.LogTrace("Called {SocketfunctionName}. We need to poll for {What} on socket {Sockfd}.",
+                nameof(CURLMoption.SOCKETFUNCTION), what, sockfd);
 
             switch (what)
             {
@@ -104,7 +104,8 @@ namespace CurlThin.HyperPipe
                         events |= PollMask.Readable;
                     }
 
-                    Logger.LogTrace($"Polling socket {sockfd} using libuv with mask {events}.");
+                    Logger.LogTrace("Polling socket {Sockfd} using libuv with mask {Events}.",
+                        sockfd, events);
 
                     _socketMap.GetOrCreatePoll(sockfd, _loop).Start(events, (poll, status) =>
                     {
@@ -119,13 +120,13 @@ namespace CurlThin.HyperPipe
                             flags |= CURLcselect.OUT;
                         }
 
-                        Logger.LogTrace($"Finished polling socket {sockfd}.");
+                        Logger.LogTrace("Finished polling socket {Sockfd}.", sockfd);
                         CurlNative.Multi.SocketAction(_multiHandle, sockfd, flags, out int _);
                         CheckMultiInfo();
                     });
                     break;
                 case CURLpoll.REMOVE:
-                    Logger.LogTrace($"Removing poll of socket {sockfd}.");
+                    Logger.LogTrace("Removing poll of socket {Sockfd}.", sockfd);
                     _socketMap.RemovePoll(sockfd);
                     break;
                 default:
@@ -146,21 +147,23 @@ namespace CurlThin.HyperPipe
         {
             if (timeoutMs < 0)
             {
-                Logger.LogTrace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs}. "
-                             + "Deleting our timer.");
+                Logger.LogTrace("Called {TimerfunctionName} with timeout set to {TimeoutMs}. " +
+                    "Deleting our timer.", nameof(CURLMoption.TIMERFUNCTION), timeoutMs);
                 _timeout.Stop();
             }
             else if (timeoutMs == 0)
             {
-                Logger.LogTrace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs}. "
-                             + "We should call curl_multi_socket_action or curl_multi_perform (once) as soon as possible.");
+                Logger.LogTrace("Called {TimerfunctionName} with timeout set to {TimeoutMs}. " +
+                    "We should call curl_multi_socket_action or curl_multi_perform (once) as soon as possible.",
+                    nameof(CURLMoption.TIMERFUNCTION), timeoutMs);
 
                 CurlNative.Multi.SocketAction(_multiHandle, SafeSocketHandle.Invalid, 0, out int _);
                 CheckMultiInfo();
             }
             else
             {
-                Logger.LogTrace($"Called {nameof(CURLMoption.TIMERFUNCTION)} with timeout set to {timeoutMs} ms.");
+                Logger.LogTrace("Called {TimerfunctionName} with timeout set to {TimeoutMs} ms.",
+                    nameof(CURLMoption.TIMERFUNCTION), timeoutMs);
 
                 _timeout.Start(t =>
                 {
